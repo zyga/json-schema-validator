@@ -395,7 +395,40 @@ class Validator(object):
         if isinstance(obj, dict):
             self._validate_properties(schema, obj)
             self._validate_additional_properties(schema, obj)
+        self._report_unsupported(schema)
         return True
+
+    def _report_unsupported(self, schema):
+        if schema.items != {}:
+            raise NotImplementedError("items is not supported")
+        if schema.requires != {}:
+            raise NotImplementedError("requires is not supported")
+        if schema.minimum is not None:
+            raise NotImplementedError("minimum is not supported")
+        if schema.maximum is not None:
+            raise NotImplementedError("maximum is not supported")
+        if schema.minItems != 0:
+            raise NotImplementedError("minItems is not supported")
+        if schema.maxItems is not None:
+            raise NotImplementedError("maxItems is not supported")
+        if schema.uniqueItems != False:
+            raise NotImplementedError("uniqueItems is not supported")
+        if schema.pattern is not None:
+            raise NotImplementedError("pattern is not supported")
+        if schema.minLength != 0:
+            raise NotImplementedError("minLength is not supported")
+        if schema.maxLength is not None:
+            raise NotImplementedError("maxLength is not supported")
+        if schema.enum is not None:
+            raise NotImplementedError("enum is not supported")
+        if schema.format is not None:
+            raise NotImplementedError("format is not supported")
+        if schema.contentEncoding is not None:
+            raise NotImplementedError("contentEncoding is not supported")
+        if schema.divisibleBy != 1:
+            raise NotImplementedError("divisibleBy is not supported")
+        if schema.disallow is not None:
+            raise NotImplementedError("disallow is not supported")
 
     def _validate_type(self, schema, obj):
         for json_type in schema.type:
