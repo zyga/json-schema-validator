@@ -947,7 +947,7 @@ class ValidatorTests(unittest.TestCase):
             'data': """
             {
                 "foo": 5,
-                "boolean": false
+                "bar": false
             }"""
         }),
         ("property_check_is_not_primitive", {
@@ -1145,6 +1145,154 @@ class ValidatorTests(unittest.TestCase):
             'raises': ValidationError(
                 "None does not match type 'number'")
         }),
+        ("requires_with_simple_property_name_does_nothing_when_parent_property_is_not_used", {
+            'schema': """
+            {
+                "properties": {
+                    "foo": {
+                        "optional": true
+                    },
+                    "bar": {
+                        "requires": "foo",
+                        "optional": true
+                    }
+                }
+            }
+            """,
+            'data': '{}',
+        }),
+        ("requires_with_simple_property_name_can_report_problems", {
+            'schema': """
+            {
+                "properties": {
+                    "foo": {
+                        "optional": true
+                    },
+                    "bar": {
+                        "requires": "foo",
+                        "optional": true
+                    }
+                }
+            }
+            """,
+            'data': '{"bar": null}',
+            'raises': ValidationError(
+                "None requires presence of property 'foo' in the same"
+                " object")
+        }),
+        ("requires_with_simple_property_name_can_report_problems_while_nested", {
+            'schema': """
+            {
+                "type": "object",
+                "properties": {
+                    "nested": {
+                        "properties": {
+                            "foo": {
+                                "optional": true
+                            },
+                            "bar": {
+                                "requires": "foo",
+                                "optional": true
+                            }
+                        }
+                    }
+                }
+            }
+            """,
+            'data': '{"nested": {"bar": null}}',
+            'raises': ValidationError(
+                "None requires presence of property 'foo' in the same"
+                " object")
+        }),
+        ("requires_with_simple_property_name_works_when_condition_satisfied", {
+            'schema': """
+            {
+                "properties": {
+                    "foo": {
+                        "optional": true
+                    },
+                    "bar": {
+                        "requires": "foo",
+                        "optional": true
+                    }
+                }
+            }
+            """,
+            'data': '{"foo": null, "bar": null}',
+        }),
+        ("requires_with_schema_name_does_nothing_when_parent_property_is_not_used", {
+            'schema': """
+            {
+                "properties": {
+                    "foo": {
+                        "optional": true
+                    },
+                    "bar": {
+                        "requires": {
+                            "properties": {
+                                "foo": {
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "optional": true
+                    }
+                }
+            }
+            """,
+            'data': '{}',
+        }),
+        ("requires_with_schema_can_report_problems", {
+            'schema': """
+            {
+                "properties": {
+                    "foo": {
+                        "optional": true
+                    },
+                    "bar": {
+                        "requires": {
+                            "properties": {
+                                "foo": {
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "optional": true
+                    }
+                }
+            }
+            """,
+            'data': '{"bar": null}',
+            'raises': ValidationError(
+                "{'bar': None} does not have property 'foo'")
+        }),
+        ("requires_with_schema_can_report_subtle_problems", {
+            # In this test presence of "bar" requires that "foo" is
+            # present and has a type "number"
+            'schema': """
+            {
+                "properties": {
+                    "foo": {
+                        "optional": true
+                    },
+                    "bar": {
+                        "requires": {
+                            "properties": {
+                                "foo": {
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "optional": true
+                    }
+                }
+            }
+            """,
+            'data': '{"bar": null, "foo": "not a number"}',
+            'raises': ValidationError(
+                "'not a number' does not match type 'number'")
+        }),
+
     ]
 
     def test_validate(self):

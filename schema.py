@@ -390,24 +390,50 @@ class Validator(object):
         "null": types.NoneType,
     }
 
-    def validate(self, schema, obj):
+    def __init__(self):
+        self._obj_stack = []
+
+    @classmethod
+    def validate(cls, schema, obj):
+        """
+        Validate specified JSON object obj with specified Schema
+        instance schema.
+
+        Returns True on success.
+        Raises ValidationError if the object does not match schema.
+        Raises SchemaError if the schema itself is wrong.
+        """
         if not isinstance(schema, Schema):
             raise ValueError(
                 "schema value {0!r} is not a Schema"
                 " object".format(schema))
-        self._validate_type(schema, obj)
-        if isinstance(obj, dict):
-            self._validate_properties(schema, obj)
-            self._validate_additional_properties(schema, obj)
-        if isinstance(obj, list):
-            self._validate_items(schema, obj)
-        self._validate_enum(schema, obj)
-        self._report_unsupported(schema)
+        cls()._validate_no_push(schema, obj)
         return True
 
+    def _validate(self, schema, obj):
+        self._obj_stack.append(obj)
+        try:
+            self._validate_no_push(schema, obj)
+        finally:
+            self._obj_stack.pop()
+
+    def _validate_no_push(self, schema, obj):
+        self._validate_type(schema, obj)
+        self._validate_requires(schema, obj)
+        if isinstance(obj, dict):
+            self._obj_stack.append(obj)
+            self._validate_properties(schema, obj)
+            self._validate_additional_properties(schema, obj)
+            self._obj_stack.pop()
+        elif isinstance(obj, list):
+            self._obj_stack.append(obj)
+            self._validate_items(schema, obj)
+            self._obj_stack.pop()
+        else:
+            self._validate_enum(schema, obj)
+        self._report_unsupported(schema)
+
     def _report_unsupported(self, schema):
-        if schema.requires != {}:
-            raise NotImplementedError("requires is not supported")
         if schema.minimum is not None:
             raise NotImplementedError("minimum is not supported")
         if schema.maximum is not None:
@@ -447,8 +473,9 @@ class Validator(object):
                             obj=obj, type=json_type))
                 break
             elif isinstance(json_type, dict):
-                # Nested type check
-                self.validate(Schema(json_type), obj)
+                # Nested type check. This is pretty odd case. Here we
+                # don't change our object stack (it's the same object).
+                self._validate_no_push(Schema(json_type), obj)
                 break
             else:
                 # Simple type check
@@ -465,7 +492,7 @@ class Validator(object):
         for prop, prop_schema_data in schema.properties.iteritems():
             prop_schema = Schema(prop_schema_data)
             if prop in obj:
-                return self.validate(prop_schema, obj[prop])
+                self._validate(prop_schema, obj[prop])
             else:
                 if not prop_schema.optional:
                     raise ValidationError(
@@ -485,9 +512,9 @@ class Validator(object):
                             obj=obj, prop=prop))
         else:
             additional_schema = Schema(schema.additionalProperties)
-            # Nested type check
+            # Check each property against this object
             for prop_value in obj.itervalues(): 
-                self.validate(additional_schema, prop_value)
+                self._validate(additional_schema, prop_value)
 
     def _validate_enum(self, schema, obj):
         if schema.enum is not None:
@@ -508,7 +535,7 @@ class Validator(object):
         if isinstance(items_schema_json, dict):
             items_schema = Schema(items_schema_json)
             for item in obj:
-                self.validate(items_schema, item)
+                self._validate(items_schema, item)
         elif isinstance(items_schema_json, list):
             if len(obj) < len(items_schema_json):
                 # If our array is shorter than the schema then
@@ -533,8 +560,42 @@ class Validator(object):
             for item, item_schema_json in itertools.izip_longest(
                 obj, items_schema_json, fillvalue=schema.additionalProperties):
                 item_schema = Schema(item_schema_json)
-                self.validate(item_schema, item)
+                self._validate(item_schema, item)
 
+    def _validate_requires(self, schema, obj):
+        requires_json = schema.requires
+        if requires_json == {}:
+            # default value, don't do anything
+            return
+        # Find our enclosing object in the object stack
+        if len(self._obj_stack) < 2:
+            raise ValidationError(
+                "{obj!r} requires that enclosing object matches"
+                " schema {schema!r} but there is no enclosing"
+                " object".format(obj=obj, schema=requires_json))
+        # Note: Parent object can be None, (e.g. a null property)
+        parent_obj = self._obj_stack[-2]
+        if isinstance(requires_json, basestring):
+            # This is a simple property test
+            if (not isinstance(parent_obj, dict) 
+                or requires_json not in parent_obj):
+                raise ValidationError(
+                    "{obj!r} requires presence of property {requires!r}"
+                    " in the same object".format(
+                        obj=obj, requires=requires_json))
+        elif isinstance(requires_json, dict):
+            # Requires designates a whole schema, the enclosing object
+            # must match against that schema.
+            # Here we resort to a small hack. Proper implementation
+            # would require us to validate the parent object from its
+            # own context (own list of parent objects). Since doing that
+            # and restoring the state would be very complicated we just
+            # instantiate a new validator with a subset of our current
+            # history here.
+            sub_validator = Validator()
+            sub_validator._obj_stack = self._obj_stack[:-2]
+            sub_validator._validate_no_push(
+                Schema(requires_json), parent_obj)
 
 
 def validate(schema_text, data_text):
@@ -546,4 +607,4 @@ def validate(schema_text, data_text):
     import simplejson as json
     schema = Schema(json.loads(schema_text))
     data = json.loads(data_text)
-    return Validator().validate(schema, data)
+    return Validator.validate(schema, data)
