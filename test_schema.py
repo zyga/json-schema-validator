@@ -451,6 +451,36 @@ class SchemaTests(unittest.TestCase):
             'raises': SchemaError(
                 "minLength value 'foobar' is not an integer"),
         }),
+        ("maxLength_default", {
+            'schema': '{}',
+            'expected': {
+                'maxLength': 0,
+            },
+        }),
+        ("maxLength_integer", {
+            'schema': '{"maxLength": 13}',
+            'expected': {
+                'maxLength': 13,
+            },
+        }),
+        ("maxLength_zero", {
+            'schema': '{"maxLength": 0}',
+            'expected': {
+                'maxLength': 0,
+            },
+        }),
+        ("maxLength_minus_one", {
+            'schema': '{"maxLength": -1}',
+            'expected': {
+                'maxLength': -1
+            },
+        }),
+        ("maxLength_wrong_type", {
+            'schema': '{"maxLength": "foobar"}',
+            'access': 'maxLength',
+            'raises': SchemaError(
+                "maxLength value 'foobar' is not an integer"),
+        }),
     ]
 
     def test_schema_attribute(self):

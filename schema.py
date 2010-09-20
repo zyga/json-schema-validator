@@ -236,6 +236,14 @@ class Schema(object):
                 "minLength value {0!r} cannot be negative".format(value))
         return value
 
+    @property
+    def maxLength(self):
+        value = self._schema.get("maxLength", 0)
+        if not isinstance(value, int):
+            raise SchemaError(
+                "maxLength value {0!r} is not an integer".format(value))
+        return value
+
 
 class Validator(object):
     """
