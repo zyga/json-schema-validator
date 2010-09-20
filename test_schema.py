@@ -458,7 +458,7 @@ class SchemaTests(unittest.TestCase):
         ("maxLength_default", {
             'schema': '{}',
             'expected': {
-                'maxLength': 0,
+                'maxLength': None,
             },
         }),
         ("maxLength_integer", {
