@@ -301,6 +301,22 @@ class Schema(object):
         raise NotImplementedError(
             "format value {0!r} is not supported".format(value))
 
+    @property
+    def contentEncoding(self):
+        value = self._schema.get("contentEncoding", None)
+        if value is None:
+            return
+        if value.lower() not in [
+            "7bit", "8bit", "binary", "quoted-printable", "base64",
+            "ietf-token", "x-token"]:
+            raise SchemaError(
+                "contentEncoding value {0!r} is not"
+                " valid".format(value))
+        if value.lower() != "base64":
+            raise NotImplementedError(
+                "contentEncoding value {0!r} is not supported".format(
+                    value))
+        return value
 
 
 class Validator(object):

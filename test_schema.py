@@ -572,8 +572,40 @@ class SchemaTests(unittest.TestCase):
         ("format_not_implemented", {
             'schema': '{"format": "color"}',
             'access': 'format',
-            'raises': NotImplementedError('format value \'color\' is not supported')
+            'raises': NotImplementedError(
+                "format value 'color' is not supported")
         }),
+        ("contentEncoding_default", {
+            'schema': '{}',
+            'expected': {
+                'contentEncoding': None,
+            }
+        }),
+        ("contentEncoding_base64", {
+            'schema': '{"contentEncoding": "base64"}',
+            'expected': {
+                'contentEncoding': "base64",
+            },
+        }),
+        ("contentEncoding_base64_mixed_case", {
+            'schema': '{"contentEncoding": "BAsE64"}',
+            'expected': {
+                'contentEncoding': 'BAsE64',
+            },
+        }),
+        ("contentEncoding_unsupported_value", {
+            'schema': '{"contentEncoding": "x-token"}',
+            'access': 'contentEncoding',
+            'raises': NotImplementedError(
+                "contentEncoding value 'x-token' is not supported")
+        }),
+        ("contentEncoding_unknown_value", {
+            'schema': '{"contentEncoding": "bogus"}',
+            'access': 'contentEncoding',
+            'raises': SchemaError(
+                "contentEncoding value 'bogus' is not valid")
+        }),
+
     ]
 
     def test_schema_attribute(self):
