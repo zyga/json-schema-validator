@@ -481,6 +481,43 @@ class SchemaTests(unittest.TestCase):
             'raises': SchemaError(
                 "maxLength value 'foobar' is not an integer"),
         }),
+        ("enum_default", {
+            'schema': '{}',
+            'expected': {
+                'enum': None,
+            }
+        }),
+        ("enum_simple", {
+            'schema': '{"enum": ["foo", "bar"]}',
+            'expected': {
+                'enum': ["foo", "bar"],
+            }
+        }),
+        ("enum_mixed", {
+            'schema': '{"enum": [5, false, "foobar"]}',
+            'expected': {
+                'enum':[5, False, "foobar"]
+            }
+        }),
+        ("enum_wrong_type", {
+            'schema': '{"enum": "foobar"}',
+            'access': 'enum',
+            'raises': SchemaError(
+                "enum value 'foobar' is not a list"),
+        }),
+        ("enum_too_short", {
+            'schema': '{"enum": []}',
+            'access': 'enum',
+            'raises': SchemaError(
+                "enum value [] does not contain any elements"),
+        }),
+        ("enum_duplicates", {
+            'schema': '{"enum": ["foo", "foo"]}',
+            'access': 'enum',
+            'raises': SchemaError(
+                "enum value ['foo', 'foo'] contains duplicate element"
+                " 'foo'"),
+        }),
     ]
 
     def test_schema_attribute(self):

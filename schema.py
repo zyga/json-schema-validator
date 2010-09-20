@@ -244,6 +244,29 @@ class Schema(object):
                 "maxLength value {0!r} is not an integer".format(value))
         return value
 
+    @property
+    def enum(self):
+        value = self._schema.get("enum", None)
+        if value is None:
+            return
+        if not isinstance(value, list):
+            raise SchemaError(
+                "enum value {0!r} is not a list".format(value))
+        if len(value) == 0:
+            raise SchemaError(
+                "enum value {0!r} does not contain any"
+                " elements".format(value))
+        seen = set()
+        for item in value:
+            if item in seen:
+                raise SchemaError(
+                    "enum value {0!r} contains duplicate element"
+                    " {1!r}".format(value, item))
+            else:
+                seen.add(item)
+        return value
+
+
 
 class Validator(object):
     """
