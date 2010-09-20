@@ -286,6 +286,22 @@ class Schema(object):
                 "description value {0!r} is not a string".format(value))
         return value
 
+    @property
+    def format(self):
+        value = self._schema.get("format", None)
+        if value is None:
+            return
+        if not isinstance(value, basestring):
+            raise SchemaError(
+                "format value {0!r} is not a string".format(value))
+        if value in [
+            'date-time',
+        ]:
+            return value
+        raise NotImplementedError(
+            "format value {0!r} is not supported".format(value))
+
+
 
 class Validator(object):
     """

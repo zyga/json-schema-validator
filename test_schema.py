@@ -552,6 +552,28 @@ class SchemaTests(unittest.TestCase):
             'access': 'description',
             'raises': SchemaError('description value 5 is not a string')
         }),
+        ("format_default", {
+            'schema': '{}',
+            'expected': {
+                'format': None
+            },
+        }),
+        ("format_date_time", {
+            'schema': '{"format": "date-time"}',
+            'expected': {
+                'format': "date-time"
+            },
+        }),
+        ("format_wrong_type", {
+            'schema': '{"format": 5}',
+            'access': 'format',
+            'raises': SchemaError('format value 5 is not a string')
+        }),
+        ("format_not_implemented", {
+            'schema': '{"format": "color"}',
+            'access': 'format',
+            'raises': NotImplementedError('format value \'color\' is not supported')
+        }),
     ]
 
     def test_schema_attribute(self):
