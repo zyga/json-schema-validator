@@ -42,6 +42,9 @@ class Schema(object):
             raise SchemaError("Schema definition must be a JSON object")
         self._schema = json_obj
 
+    def __repr__(self):
+        return "Schema({0!r})".format(self._schema)
+
     @property
     def type(self):
         """
