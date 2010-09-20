@@ -709,6 +709,12 @@ class SchemaTests(unittest.TestCase):
                 "disallow value ['string', 'string'] contains"
                 " duplicate element 'string'")
         }),
+        ('extends_not_supported', {
+            'schema': '{}',
+            'access': 'extends',
+            'raises': NotImplementedError(
+                "extends property is not supported"),
+        }),
     ]
 
     def test_schema_attribute(self):

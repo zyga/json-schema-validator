@@ -366,6 +366,10 @@ class Schema(object):
                         " name".format(js_disallow))
         return disallow_list
 
+    @property
+    def extends(self):
+        raise NotImplementedError("extends property is not supported")
+
 
 class Validator(object):
     """
