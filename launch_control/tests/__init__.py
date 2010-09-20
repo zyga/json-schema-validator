@@ -3,8 +3,8 @@ Package with unit tests for launch_control
 """
 
 import doctest
+import testscenarios
 import unittest
-
 
 def app_modules():
     return [
@@ -38,6 +38,7 @@ def app_modules():
             'launch_control.utils.json.proxies.timedelta',
             'launch_control.utils.json.proxies.uuid',
             'launch_control.utils.json.registry',
+            'launch_control.utils.json.schema',
             'launch_control.utils.registry',
             ]
 
@@ -47,6 +48,7 @@ def test_modules():
             'launch_control.tests.test_commands',
             'launch_control.tests.test_dashboard_bundle_format_1_0',
             'launch_control.tests.test_registry',
+            'launch_control.tests.test_schema',
             'launch_control.tests.test_utils_filesystem',
             'launch_control.tests.test_utils_json_package',
             ]
@@ -62,7 +64,7 @@ def test_suite():
     loader = unittest.TestLoader()
     for name in modules:
         unit_suite = loader.loadTestsFromName(name)
-        suite.addTests(unit_suite)
+        suite.addTests(testscenarios.generate_scenarios(unit_suite))
         doc_suite = doctest.DocTestSuite(name)
         suite.addTests(doc_suite)
     return suite
