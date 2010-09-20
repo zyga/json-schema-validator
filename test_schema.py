@@ -1,6 +1,7 @@
-import unittest
-import testscenarios
+import re
 import simplejson
+import testscenarios
+import unittest
 
 from schema import (
     validate, Schema, Validator, SchemaError, ValidationError)
@@ -400,6 +401,55 @@ class SchemaTests(unittest.TestCase):
             'access': 'uniqueItems',
             'raises': SchemaError(
                 "uniqueItems value 5 is not a boolean")
+        }),
+        ("pattern_default", {
+            'schema': '{}',
+            'expected': {
+                'pattern': None,
+            },
+        }),
+        ("pattern_simple", {
+            'schema': '{"pattern": "foo|bar"}',
+            'expected': {
+                'pattern': re.compile("foo|bar"),
+            },
+        }),
+        ("pattern_broken", {
+            'schema': '{"pattern": "[unterminated"}',
+            'access': 'pattern',
+            'raises': SchemaError(
+                "pattern value '[unterminated' is not a valid regular"
+                " expression: unexpected end of regular expression"),
+        }),
+        ("minLength_default", {
+            'schema': '{}',
+            'expected': {
+                'minLength': 0,
+            },
+        }),
+        ("minLength_integer", {
+            'schema': '{"minLength": 13}',
+            'expected': {
+                'minLength': 13,
+            },
+        }),
+        ("minLength_zero", {
+            'schema': '{"minLength": 0}',
+            'expected': {
+                'minLength': 0,
+            },
+        }),
+        ("minLength_minus_one", {
+            'schema': '{"minLength": -1}',
+            'access': 'minLength',
+            'raises': SchemaError(
+                "minLength value -1 cannot be negative"),
+        }),
+        ("minLength_wrong_type", {
+            'schema': '{"minLength": "foobar"}',
+            'access': 'minLength',
+            'raises': SchemaError(
+                "minLength value 'foobar' is not an integer"),
         }),
     ]
 

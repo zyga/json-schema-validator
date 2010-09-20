@@ -6,6 +6,7 @@ Note: only a subset of schema features are currently supported.
 See: json-schema.org for details
 """
 import decimal
+import re
 import types
 
 # Global configuration,
@@ -203,10 +204,37 @@ class Schema(object):
                 "uniqueItems value {0!r} is not a boolean".format(value))
         return value
 
+    @property
+    def pattern(self):
+        """
+        Note: JSON schema specifications says that this value SHOULD
+        follow the EMCA 262/Perl 5 format. We cannot support this so we
+        support python regular expressions instead. This is still valid
+        but should be noted for clarity.
 
+        The return value is either None or a compiled regular expression
+        object
+        """
+        value = self._schema.get("pattern", None)
+        if value is None:
+            return
+        try:
+            return re.compile(value)
+        except re.error as ex:
+            raise SchemaError(
+                "pattern value {0!r} is not a valid regular expression:"
+                " {1}".format(value, str(ex)))
 
-                            
-
+    @property
+    def minLength(self):
+        value = self._schema.get("minLength", 0)
+        if not isinstance(value, int):
+            raise SchemaError(
+                "minLength value {0!r} is not an integer".format(value))
+        if value < 0:
+            raise SchemaError(
+                "minLength value {0!r} cannot be negative".format(value))
+        return value
 
 
 class Validator(object):
