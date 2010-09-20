@@ -1051,6 +1051,20 @@ class ValidatorTests(unittest.TestCase):
             'raises': ValidationError(
                 "5 does not match type 'string'")
         }),
+        ("enum_check_does_nothing_by_default", {
+            'schema': '{}',
+            'data': '5',
+        }),
+        ("enum_check_verifies_possible_values", {
+            'schema': '{"enum": [1, 2, 3]}',
+            'data': '2',
+        }),
+        ("enum_check_reports_unlisted_values", {
+            'schema': '{"enum": [1, 2, 3]}',
+            'data': '5',
+            'raises': ValidationError(
+                '5 does not match any value in enumeration [1, 2, 3]')
+        }),
     ]
 
     def test_validate(self):

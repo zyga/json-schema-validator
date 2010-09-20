@@ -395,6 +395,7 @@ class Validator(object):
         if isinstance(obj, dict):
             self._validate_properties(schema, obj)
             self._validate_additional_properties(schema, obj)
+        self._validate_enum(schema, obj)
         self._report_unsupported(schema)
         return True
 
@@ -419,8 +420,6 @@ class Validator(object):
             raise NotImplementedError("minLength is not supported")
         if schema.maxLength is not None:
             raise NotImplementedError("maxLength is not supported")
-        if schema.enum is not None:
-            raise NotImplementedError("enum is not supported")
         if schema.format is not None:
             raise NotImplementedError("format is not supported")
         if schema.contentEncoding is not None:
@@ -486,6 +485,17 @@ class Validator(object):
             # Nested type check
             for prop_value in obj.itervalues(): 
                 self.validate(additional_schema, prop_value)
+
+    def _validate_enum(self, schema, obj):
+        if schema.enum is not None:
+            for allowed_value in schema.enum:
+                if obj == allowed_value:
+                    break
+            else:
+                raise ValidationError(
+                    "{obj!r} does not match any value in enumeration"
+                    " {enum!r}".format(obj=obj, enum=schema.enum))
+
 
 
 def validate(schema_text, data_text):
