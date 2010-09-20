@@ -605,6 +605,36 @@ class SchemaTests(unittest.TestCase):
             'raises': SchemaError(
                 "contentEncoding value 'bogus' is not valid")
         }),
+        ("divisibleBy_default", {
+            'schema': '{}',
+            'expected': {
+                'divisibleBy': 1
+            }
+        }),
+        ("divisibleBy_int", {
+            'schema': '{"divisibleBy": 5}',
+            'expected': {
+                'divisibleBy': 5
+            }
+        }),
+        ("divisibleBy_float", {
+            'schema': '{"divisibleBy": 3.5}',
+            'expected': {
+                'divisibleBy': 3.5
+            }
+        }),
+        ("divisibleBy_wrong_type", {
+            'schema': '{"divisibleBy": "foobar"}',
+            'access': 'divisibleBy',
+            'raises': SchemaError(
+                "divisibleBy value 'foobar' is not a numeric type")
+        }),
+        ("divisibleBy_minus_one", {
+            'schema': '{"divisibleBy": -1}',
+            'access': 'divisibleBy',
+            'raises': SchemaError(
+                "divisibleBy value -1 cannot be negative")
+        }),
 
     ]
 

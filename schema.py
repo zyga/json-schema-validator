@@ -318,6 +318,21 @@ class Schema(object):
                     value))
         return value
 
+    @property
+    def divisibleBy(self):
+        value = self._schema.get("divisibleBy", 1)
+        if value is None:
+            return
+        if not isinstance(value, NUMERIC_TYPES):
+            raise SchemaError(
+                "divisibleBy value {0!r} is not a numeric type".
+                format(value))
+        if value < 0:
+            raise SchemaError(
+                "divisibleBy value {0!r} cannot be"
+                " negative".format(value))
+        return value
+
 
 class Validator(object):
     """
