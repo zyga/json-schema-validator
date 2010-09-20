@@ -1065,6 +1065,86 @@ class ValidatorTests(unittest.TestCase):
             'raises': ValidationError(
                 '5 does not match any value in enumeration [1, 2, 3]')
         }),
+        ("items_check_does_nothing_for_non_arrays", {
+            'schema': '{"items": {"type": "string"}}',
+            'data': '5',
+        }),
+        ("items_with_single_schema_applies_to_each_item", {
+            'schema': '{"items": {"type": "string"}}',
+            'data': '["foo", "bar", "froz"]',
+        }),
+        ("items_with_single_schema_finds_problems", {
+            'schema': '{"items": {"type": "string"}}',
+            'data': '["foo", null, "froz"]',
+            'raises': ValidationError(
+                "None does not match type 'string'")
+        }),
+        ("items_with_array_schema_applies_to_corresponding_items", {
+            'schema': """
+            {
+                "items": [
+                    {"type": "string"},
+                    {"type": "boolean"}
+                ]
+            }""",
+            'data': '["foo", true]',
+        }),
+        ("items_with_array_schema_checks_for_too_short_data", {
+            'schema': """
+            {
+                "items": [
+                    {"type": "string"},
+                    {"type": "boolean"}
+                ]
+            }""",
+            'data': '["foo"]',
+            'raises': ValidationError(
+                "['foo'] is shorter than array schema [{'type':"
+                " 'string'}, {'type': 'boolean'}]")
+        }),
+        ("items_with_array_schema_and_additionalProperties_of_false_checks_for_too_much_data", {
+            'schema': """
+            {
+                "items": [
+                    {"type": "string"},
+                    {"type": "boolean"}
+                ],
+                "additionalProperties": false
+            }""",
+            'data': '["foo", false, 5]',
+            'raises': ValidationError(
+                "['foo', False, 5] is not of the same length as array"
+                " schema [{'type': 'string'}, {'type': 'boolean'}] and"
+                " additionalProperties is false")
+        }),
+        ("items_with_array_schema_and_additionalProperties", {
+            'schema': """
+            {
+                "items": [
+                    {"type": "string"},
+                    {"type": "boolean"}
+                ],
+                "additionalProperties": {
+                    "type": "number"
+                }
+            }""",
+            'data': '["foo", false, 5, 7.9]',
+        }),
+        ("items_with_array_schema_and_additionalProperties_can_find_problems", {
+            'schema': """
+            {
+                "items": [
+                    {"type": "string"},
+                    {"type": "boolean"}
+                ],
+                "additionalProperties": {
+                    "type": "number"
+                }
+            }""",
+            'data': '["foo", false, 5, 7.9, null]',
+            'raises': ValidationError(
+                "None does not match type 'number'")
+        }),
     ]
 
     def test_validate(self):

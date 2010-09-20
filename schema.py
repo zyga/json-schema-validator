@@ -6,6 +6,7 @@ Note: only a subset of schema features are currently supported.
 See: json-schema.org for details
 """
 import decimal
+import itertools
 import re
 import types
 
@@ -395,13 +396,13 @@ class Validator(object):
         if isinstance(obj, dict):
             self._validate_properties(schema, obj)
             self._validate_additional_properties(schema, obj)
+        if isinstance(obj, list):
+            self._validate_items(schema, obj)
         self._validate_enum(schema, obj)
         self._report_unsupported(schema)
         return True
 
     def _report_unsupported(self, schema):
-        if schema.items != {}:
-            raise NotImplementedError("items is not supported")
         if schema.requires != {}:
             raise NotImplementedError("requires is not supported")
         if schema.minimum is not None:
@@ -454,7 +455,6 @@ class Validator(object):
         else:
             raise ValidationError(
                 "{obj!r} does not match type {type!r}".format(
-            # Nested type check
                     obj=obj, type=json_type))
 
     def _validate_properties(self, schema, obj):
@@ -495,6 +495,42 @@ class Validator(object):
                 raise ValidationError(
                     "{obj!r} does not match any value in enumeration"
                     " {enum!r}".format(obj=obj, enum=schema.enum))
+
+    def _validate_items(self,  schema, obj):
+        assert isinstance(obj, list)
+        items_schema_json = schema.items
+        if items_schema_json == {}:
+            # default value, don't do anything
+            return
+        if isinstance(items_schema_json, dict):
+            items_schema = Schema(items_schema_json)
+            for item in obj:
+                self.validate(items_schema, item)
+        elif isinstance(items_schema_json, list):
+            if len(obj) < len(items_schema_json):
+                # If our array is shorter than the schema then
+                # validation fails. Longer arrays are okay (during this
+                # step) as they are validated based on
+                # additionalProperties schema
+                raise ValidationError(
+                    "{obj!r} is shorter than array schema {schema!r}".
+                    format(obj=obj, schema=items_schema_json))
+            if len(obj) != len(items_schema_json) and schema.additionalProperties is False:
+                # If our array is not exactly the same size as the
+                # schema and additional properties are disallowed then
+                # validation fails
+                raise ValidationError(
+                    "{obj!r} is not of the same length as array schema"
+                    " {schema!r} and additionalProperties is"
+                    " false".format(obj=obj, schema=items_schema_json))
+            # Validate each array element using schema for the
+            # corresponding array index, fill missing values (since
+            # there may be more items in our array than in the schema)
+            # with additionalProperties which by now is not False
+            for item, item_schema_json in itertools.izip_longest(
+                obj, items_schema_json, fillvalue=schema.additionalProperties):
+                item_schema = Schema(item_schema_json)
+                self.validate(item_schema, item)
 
 
 
