@@ -518,6 +518,23 @@ class SchemaTests(unittest.TestCase):
                 "enum value ['foo', 'foo'] contains duplicate element"
                 " 'foo'"),
         }),
+        ("title_default", {
+            'schema': '{}',
+            'expected': {
+                'title': None,
+            },
+        }),
+        ("title_simple", {
+            'schema': '{"title": "foobar"}',
+            'expected': {
+                'title': "foobar",
+            },
+        }),
+        ("title_wrong_type", {
+            'schema': '{"title": 5}',
+            'access': 'title',
+            'raises': SchemaError('title value 5 is not a string')
+        }),
     ]
 
     def test_schema_attribute(self):

@@ -265,6 +265,16 @@ class Schema(object):
             else:
                 seen.add(item)
         return value
+    
+    @property
+    def title(self):
+        value = self._schema.get("title", None)
+        if value is None:
+            return
+        if not isinstance(value, basestring):
+            raise SchemaError(
+                "title value {0!r} is not a string".format(value))
+        return value
 
 
 
