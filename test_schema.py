@@ -4,7 +4,11 @@ import testscenarios
 import unittest
 
 from schema import (
-    validate, Schema, Validator, SchemaError, ValidationError)
+    Schema,
+    SchemaError,
+    ValidationError,
+    validate,
+)
 
 class SchemaTests(unittest.TestCase):
 
@@ -729,13 +733,340 @@ class SchemaTests(unittest.TestCase):
             try:
                 getattr(schema, self.access)
             except type(self.raises) as ex:
-                self.assertEqual(str(self.raises), str(ex))
+                self.assertEqual(str(ex), str(self.raises))
             except Exception as ex:
                 self.fail("Raised exception {0!r} instead of {1!r}".format(
                     ex, self.raises))
         else:
             self.fail("Broken test definition, must define 'expected' "
                       "or 'access' and 'raises' scenario attributes")
+
+
+class ValidatorTests(unittest.TestCase):
+
+    scenarios = [
+        ("type_string_got_string", {
+            'schema': '{"type": "string"}',
+            'data': '"foobar"'
+        }),
+        ("type_string_got_null", {
+            'schema': '{"type": "string"}',
+            'data': 'null',
+            'raises': ValidationError(
+                "None does not match type 'string'"),
+        }),
+        ("type_string_got_integer", {
+            'schema': '{"type": "string"}',
+            'data': '5',
+            'raises': ValidationError(
+                "5 does not match type 'string'"),
+        }),
+        ("type_number_got_integer", {
+            'schema': '{"type": "number"}',
+            'data': '1'
+        }),
+        ("type_number_number_float", {
+            'schema': '{"type": "number"}',
+            'data': '1.1'
+        }),
+        ("type_number_got_null", {
+            'schema': '{"type": "number"}',
+            'data': 'null',
+            'raises': ValidationError(
+                "None does not match type 'number'"),
+        }),
+        ("type_number_got_string", {
+            'schema': '{"type": "number"}',
+            'data': '"foobar"',
+            'raises': ValidationError(
+                "'foobar' does not match type 'number'"),
+        }),
+        ("type_number_got_string_that_looks_like_number", {
+            'schema': '{"type": "number"}',
+            'data': '"3"',
+            'raises': ValidationError(
+                "'3' does not match type 'number'"),
+        }),
+        ("type_integer_got_integer_one", {
+            'schema': '{"type": "integer"}',
+            'data': '1'
+        }),
+        ("type_integer_got_integer", {
+            'schema': '{"type": "integer"}',
+            'data': '5'
+        }),
+        ("type_integer_got_float", {
+            'schema': '{"type": "integer"}',
+            'data': '1.1',
+            'raises': ValidationError(
+                "1.1000000000000001 does not match type 'integer'")
+        }),
+        ("type_integer_got_null", {
+            'schema': '{"type": "integer"}',
+            'data': 'null',
+            'raises': ValidationError(
+                "None does not match type 'integer'")
+        }),
+        ("type_boolean_got_true", {
+            'schema': '{"type": "boolean"}',
+            'data': 'true',
+        }),
+        ("type_boolean_got_false", {
+            'schema': '{"type": "boolean"}',
+            'data': 'true',
+        }),
+        ("type_boolean_got_null", {
+            'schema': '{"type": "boolean"}',
+            'data': 'null',
+            'raises': ValidationError(
+                "None does not match type 'boolean'"),
+        }),
+        ("type_boolean_got_empty_string", {
+            'schema': '{"type": "boolean"}',
+            'data': '""',
+            'raises': ValidationError(
+                "'' does not match type 'boolean'"),
+        }),
+        ("type_boolean_got_empty_list", {
+            'schema': '{"type": "boolean"}',
+            'data': '[]',
+            'raises': ValidationError(
+                "[] does not match type 'boolean'"),
+        }),
+        ("type_boolean_got_empty_object", {
+            'schema': '{"type": "boolean"}',
+            'data': '{}',
+            'raises': ValidationError(
+                "{} does not match type 'boolean'"),
+        }),
+        ("type_object_got_object", {
+            'schema': '{"type": "object"}',
+            'data': '{}'
+        }),
+        ("type_object_got_integer", {
+            'schema': '{"type": "object"}',
+            'data': '1',
+            'raises': ValidationError(
+                "1 does not match type 'object'")
+        }),
+        ("type_object_got_null", {
+            'schema': '{"type": "object"}',
+            'data': 'null',
+            'raises': ValidationError(
+                "None does not match type 'object'")
+        }),
+        ("type_array_got_array", {
+            'schema': '{"type": "array"}',
+            'data': '[]'
+        }),
+        ("type_array_got_null", {
+            'schema': '{"type": "array"}',
+            'data': 'null',
+            'raises': ValidationError(
+                "None does not match type 'array'")
+        }),
+        ("type_array_got_integer", {
+            'schema': '{"type": "array"}',
+            'data': '1',
+            'raises': ValidationError(
+                "1 does not match type 'array'")
+        }),
+        ("type_null_got_null", {
+            'schema': '{"type": "null"}',
+            'data': 'null',
+        }),
+        ("type_null_got_empty_string", {
+            'schema': '{"type": "null"}',
+            'data': '""',
+            'raises': ValidationError(
+                "'' does not match type 'null'")
+        }),
+        ("type_null_got_zero", {
+            'schema': '{"type": "null"}',
+            'data': '0',
+            'raises': ValidationError(
+                "0 does not match type 'null'")
+        }),
+        ("type_null_got_empty_list", {
+            'schema': '{"type": "null"}',
+            'data': '[]',
+            'raises': ValidationError(
+                "[] does not match type 'null'")
+        }),
+        ("type_null_got_empty_object", {
+            'schema': '{"type": "null"}',
+            'data': '{}',
+            'raises': ValidationError(
+                "{} does not match type 'null'")
+        }),
+        ("type_any_got_null", {
+            'schema': '{"type": "any"}',
+            'data': 'null',
+        }),
+        ("type_any_got_integer", {
+            'schema': '{"type": "any"}',
+            'data': '5',
+        }),
+        ("type_any_got_boolean", {
+            'schema': '{"type": "any"}',
+            'data': 'false',
+        }),
+        ("type_any_got_string", {
+            'schema': '{"type": "any"}',
+            'data': '"foobar"',
+        }),
+        ("type_any_got_array", {
+            'schema': '{"type": "any"}',
+            'data': '[]',
+        }),
+        ("type_any_got_object", {
+            'schema': '{"type": "any"}',
+            'data': '{}',
+        }),
+        ("type_nested_schema_check", {
+            'schema': '{"type": {"type": "number"}}',
+            'data': '5',
+        }),
+        ("property_ignored_on_non_objects", {
+            'schema': '{"properties": {"foo": {"type": "number"}}}',
+            'data': '"foobar"',
+        }),
+        ("property_checks_known_props", {
+            'schema': """
+            {
+                "type": "object",
+                "properties": {
+                    "foo": {
+                        "type": "number"
+                    },
+                    "bar": {
+                        "type": "boolean"
+                    }
+                }
+            }""",
+            'data': """
+            {
+                "foo": 5,
+                "boolean": false
+            }"""
+        }),
+        ("property_check_is_not_primitive", {
+            'schema': """
+            {
+                "type": "object",
+                "properties": {
+                    "foo": {
+                        "type": "number"
+                    }
+                }
+            }""",
+            'data': '{"foo": "foobar"}',
+            'raises': ValidationError(
+                "'foobar' does not match type 'number'")
+        }),
+        ("property_check_ignores_missing_optional_properties", {
+            'schema': """
+            {
+                "type": "object",
+                "properties": {
+                    "foo": {
+                        "type": "number",
+                        "optional": true
+                    }
+                }
+            }""",
+            'data': '{}',
+        }),
+        ("property_check_validates_optional_properties", {
+            'schema': """
+            {
+                "type": "object",
+                "properties": {
+                    "foo": {
+                        "type": "number",
+                        "optional": true
+                    }
+                }
+            }""",
+            'data': '{"foo": null}',
+            'raises': ValidationError(
+                "None does not match type 'number'")
+        }),
+        ("property_check_reports_missing_non_optional_properties", {
+            'schema': """
+            {
+                "type": "object",
+                "properties": {
+                    "foo": {
+                        "type": "number",
+                        "optional": false
+                    }
+                }
+            }""",
+            'data': '{}',
+            'raises': ValidationError(
+                "{} does not have property 'foo'")
+        }),
+        ("property_check_reports_unknown_properties_when_additionalProperties_is_false", {
+            'schema': """
+            {
+                "type": "object",
+                "additionalProperties": false
+            }""",
+            'data': '{"foo": 5}',
+            'raises': ValidationError(
+                "{'foo': 5} has unknown property 'foo' and"
+                " additionalProperties is false")
+        }),
+        ("property_check_ignores_normal_properties_when_additionalProperties_is_false", {
+            'schema': """
+            {
+                "type": "object",
+                "properties": {
+                    "foo": {}
+                },
+                "additionalProperties": false
+            }""",
+            'data': '{"foo": 5}',
+        }),
+        ("property_check_validates_additional_properties_using_specified_type_when_additionalProperties_is_an_object", {
+            'schema': """
+            {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            }""",
+            'data': '{"foo": "aaa", "bar": "bbb"}',
+        }),
+        ("property_check_validates_additional_properties_using_specified_type_when_additionalProperties_is_an_object_violation", {
+            'schema': """
+            {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            }""",
+            'data': '{"foo": "aaa", "bar": 5}',
+            'raises': ValidationError(
+                "5 does not match type 'string'")
+        }),
+    ]
+
+    def test_validate(self):
+        if hasattr(self, 'raises'):
+            self.assertRaises(
+                type(self.raises), validate, self.schema, self.data)
+            try:
+                validate(self.schema, self.data)
+            except type(self.raises) as ex:
+                self.assertEqual(str(ex), str(self.raises))
+            except Exception as ex:
+                self.fail("Raised exception {0!r} instead of {1!r}".format(
+                    ex, self.raises))
+        else:
+            self.assertEqual(
+                True, validate(self.schema, self.data))
 
 
 def suite():

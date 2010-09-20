@@ -377,77 +377,89 @@ class Validator(object):
     """
     JSON_TYPE_MAP = {
         "string": basestring,
-        "number": (int, float, decimal.Decimal),
+        "number": NUMERIC_TYPES,
         "integer": int,
         "object": dict,
         "array": list,
         "null": types.NoneType,
-        "any": object
     }
 
-    def validate_text(self, schema,  json_text):
-        return self.validate(schema,json.loads(json_text))
-
     def validate(self, schema, obj):
+        if not isinstance(schema, Schema):
+            raise ValueError(
+                "schema value {0!r} is not a Schema"
+                " object".format(schema))
         self._validate_type(schema, obj)
         if isinstance(obj, dict):
             self._validate_properties(schema, obj)
+            self._validate_additional_properties(schema, obj)
         return True
 
     def _validate_type(self, schema, obj):
         for json_type in schema.type:
-            if isinstance(json_type, dict):
+            if json_type == "any":
+                return
+            if json_type == "boolean":
+                # Bool is special cased because in python there is no
+                # way to test for isinstance(something, bool) that would
+                # not catch isinstance(1, bool) :/
+                if obj is not True and obj is not False:
+                    raise ValidationError(
+                        "{obj!r} does not match type {type!r}".format(
+                            obj=obj, type=json_type))
+                break
+            elif isinstance(json_type, dict):
+                # Nested type check
                 self.validate(Schema(json_type), obj)
-            if obj in (True, False) and json_type != "boolean":
-                raise ValidationError(
-                    "Object {obj!r} does not match type {type}".format(
-                        obj = obj, type = json_type))
+                break
             else:
-                if isinstance(obj, JSON_TYPE_MAP[json_type]):
+                # Simple type check
+                if isinstance(obj, self.JSON_TYPE_MAP[json_type]):
                     # First one that matches, wins
                     break
         else:
             raise ValidationError(
-                "Object {obj!r} does not match type {type}".format(
-                    obj = obj, type = json_type))
+                "{obj!r} does not match type {type!r}".format(
+            # Nested type check
+                    obj=obj, type=json_type))
 
     def _validate_properties(self, schema, obj):
         assert isinstance(obj, dict)
-        for prop, prop_schema in schema.properties.iteritems():
+        for prop, prop_schema_data in schema.properties.iteritems():
+            prop_schema = Schema(prop_schema_data)
             if prop in obj:
-                return self.validate(Schema(prop_schema), obj[prop])
+                return self.validate(prop_schema, obj[prop])
             else:
                 if not prop_schema.optional:
                     raise ValidationError(
-                        "Required property {prop!r} not found in {obj!r}".format(
-                            obj = obj, prop = prop))
-
+                        "{obj!r} does not have property"
+                        " {prop!r}".format( obj=obj, prop=prop))
 
     def _validate_additional_properties(self, schema, obj):
         assert isinstance(obj, dict)
-        additional_schema = self.schema.get("additionalProperties", {})
-        if schema.additional_schema == False:
+        if schema.additionalProperties is False:
             # Additional properties are disallowed
             # Report exception for each unknown property
             for prop in obj.iterkeys():
                 if prop not in schema.properties:
                     raise ValidationError(
-                        "Unknown property {prop!r} found while "
-                        "additionalProperties is false".format(
-                            prop = prop))
+                        "{obj!r} has unknown property {prop!r} and"
+                        " additionalProperties is false".format(
+                            obj=obj, prop=prop))
         else:
             additional_schema = Schema(schema.additionalProperties)
-            for prop, prop_value in obj.iteritems(): 
+            # Nested type check
+            for prop_value in obj.itervalues(): 
                 self.validate(additional_schema, prop_value)
 
 
-def validate(schema, data):
+def validate(schema_text, data_text):
     """
-    Validate specified JSON text (data) with specified schema
-
-    Both schema and data must be strings
+    Validate specified JSON text (data_text) with specified schema
+    (schema text). Both are converted to JSON objects with
+    simplesjon.loads.
     """
     import simplejson as json
-    return Validator.validate(
-        Schema(json.loads(schema)),
-        json.loads(data))
+    schema = Schema(json.loads(schema_text))
+    data = json.loads(data_text)
+    return Validator().validate(schema, data)
