@@ -635,7 +635,80 @@ class SchemaTests(unittest.TestCase):
             'raises': SchemaError(
                 "divisibleBy value -1 cannot be negative")
         }),
-
+        ('disallow_default', {
+            'schema': '{}',
+            'expected': {
+                'disallow': None
+            },
+        }),
+        ('disallow_string', {
+            'schema': '{"disallow": "string"}',
+            'expected': {
+                'disallow': ['string']
+            },
+        }),
+        ('disallow_number', {
+            'schema': '{"disallow": "number"}',
+            'expected': {
+                'disallow': ['number']
+            },
+        }),
+        ('disallow_integer', {
+            'schema': '{"disallow": "integer"}',
+            'expected': {
+                'disallow': ['integer']
+            },
+        }),
+        ('disallow_boolean', {
+            'schema': '{"disallow": "boolean"}',
+            'expected': {
+                'disallow': ['boolean']
+            },
+        }),
+        ('disallow_object', {
+            'schema': '{"disallow": "object"}',
+            'expected': {
+                'disallow': ['object']
+            },
+        }),
+        ('disallow_array', {
+            'schema': '{"disallow": "array"}',
+            'expected': {
+                'disallow': ['array']
+            },
+        }),
+        ('disallow_complex_subtype', {
+            'schema': '{"disallow": {}}',
+            'expected': {
+                'disallow': [{}],
+            },
+        }),
+        ('disallow_list', {
+            'schema': '{"disallow": ["string", "number"]}',
+            'expected': {
+                'disallow': ["string", "number"],
+            },
+        }),
+        ('disallow_wrong_type', {
+            'schema': '{"disallow": 5}',
+            'access': 'disallow',
+            'raises': SchemaError(
+                "disallow value 5 is not a simple type name,"
+                " nested schema nor a list of those"),
+        }),
+        ('disallow_not_a_simple_disallow_name', {
+            'schema': '{"disallow": "foobar"}',
+            'access': 'disallow',
+            'raises': SchemaError(
+                "disallow value 'foobar' is not a simple type name")
+        }),
+        ('disallow_list_duplicates', {
+            'schema': '{"disallow": ["string", "string"]}',
+            'access': 'disallow',
+            'raises': SchemaError(
+                "disallow value ['string', 'string'] contains"
+                " duplicate element 'string'")
+        }),
     ]
 
     def test_schema_attribute(self):

@@ -332,6 +332,39 @@ class Schema(object):
                 "divisibleBy value {0!r} cannot be"
                 " negative".format(value))
         return value
+    
+    @property
+    def disallow(self):
+        value = self._schema.get("disallow", None)
+        if value is None:
+            return
+        if not isinstance(value, (basestring, dict, list)):
+            raise SchemaError(
+                "disallow value {0!r} is not a simple type name, nested "
+                "schema nor a list of those".format( value))
+        if isinstance(value, list):
+            disallow_list = value
+        else:
+            disallow_list = [value]
+        seen = set()
+        for js_disallow in disallow_list:
+            if isinstance(js_disallow, dict):
+                # no nested validation here
+                pass
+            else:
+                if js_disallow in seen:
+                    raise SchemaError(
+                        "disallow value {0!r} contains duplicate element"
+                        " {1!r}".format(value, js_disallow))
+                else:
+                    seen.add(js_disallow)
+                if js_disallow not in (
+                    "string", "number", "integer", "boolean", "object",
+                    "array", "null", "any"):
+                    raise SchemaError(
+                        "disallow value {0!r} is not a simple type"
+                        " name".format(js_disallow))
+        return disallow_list
 
 
 class Validator(object):
