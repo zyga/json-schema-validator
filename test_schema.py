@@ -67,21 +67,21 @@ class SchemaTests(unittest.TestCase):
             'schema': '{"type": 5}',
             'access': 'type',
             'raises': SchemaError(
-                'type value 5 is not a simple type name, '
-                'nested schema nor a list of those'),
+                "type value 5 is not a simple type name,"
+                " nested schema nor a list of those"),
         }),
         ('type_not_a_simple_type_name', {
             'schema': '{"type": "foobar"}',
             'access': 'type',
             'raises': SchemaError(
-                'type value \'foobar\' is not a simple type name'),
+                "type value 'foobar' is not a simple type name"),
         }),
         ('type_list_duplicates', {
             'schema': '{"type": ["string", "string"]}',
             'access': 'type',
             'raises': SchemaError(
-                'type value [\'string\', \'string\'] contains duplicate'
-                ' element \'string\'')
+                "type value ['string', 'string'] contains duplicate"
+                " element 'string'")
         }),
         ('properties_default', {
             'schema': '{}',
