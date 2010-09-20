@@ -535,6 +535,23 @@ class SchemaTests(unittest.TestCase):
             'access': 'title',
             'raises': SchemaError('title value 5 is not a string')
         }),
+        ("description_default", {
+            'schema': '{}',
+            'expected': {
+                'description': None,
+            },
+        }),
+        ("description_simple", {
+            'schema': '{"description": "foobar"}',
+            'expected': {
+                'description': "foobar",
+            },
+        }),
+        ("description_wrong_type", {
+            'schema': '{"description": 5}',
+            'access': 'description',
+            'raises': SchemaError('description value 5 is not a string')
+        }),
     ]
 
     def test_schema_attribute(self):

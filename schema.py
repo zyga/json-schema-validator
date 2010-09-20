@@ -276,6 +276,15 @@ class Schema(object):
                 "title value {0!r} is not a string".format(value))
         return value
 
+    @property
+    def description(self):
+        value = self._schema.get("description", None)
+        if value is None:
+            return
+        if not isinstance(value, basestring):
+            raise SchemaError(
+                "description value {0!r} is not a string".format(value))
+        return value
 
 
 class Validator(object):
