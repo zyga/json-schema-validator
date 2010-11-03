@@ -1,13 +1,9 @@
 Format-Specification: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=135
-Name: Launch Control 
+Name: Linaro Python JSON 
 Maintainer: Linaro Infrastructure Team <infrastructure@linaro.org>
-Source: http://launchpad.net/launch-control/
+Source: http://launchpad.net/linaro-python-json/
 
-Files: * 
-Copyright: 2010, Linaro Limited 
-License: Affero GPL-3
-
-Files: launch-control/*
+Files: *
 Copyright: 2010, Linaro Limited 
 License: LGPL-3
 
