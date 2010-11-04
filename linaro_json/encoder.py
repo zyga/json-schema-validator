@@ -20,13 +20,13 @@
 Module with PluggableJSONEncoder
 """
 
-from linaro_python_json.impl import json
-from linaro_python_json.interface import (
+from linaro_json.impl import json
+from linaro_json.interface import (
         IComplexJSONType,
         IFundamentalJSONType,
         ISimpleJSONType,
         )
-from linaro_python_json.proxy_registry import DefaultClassRegistry
+from linaro_json.proxy_registry import DefaultClassRegistry
 
 
 class PluggableJSONEncoder(json.JSONEncoder):

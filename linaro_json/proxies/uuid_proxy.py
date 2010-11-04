@@ -22,8 +22,8 @@ Module with proxy type for uuid.UUID
 
 from uuid import UUID
 
-from linaro_python_json.interface import ISimpleJSONType
-from linaro_python_json.proxy_registry import DefaultClassRegistry
+from linaro_json.interface import ISimpleJSONType
+from linaro_json.proxy_registry import DefaultClassRegistry
 
 
 class UUIDProxy(ISimpleJSONType):

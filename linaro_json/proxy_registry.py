@@ -19,7 +19,7 @@
 """
 Class Registry for JSON type mapping and proxy classes
 """
-from linaro_python_json.interface import (
+from linaro_json.interface import (
     IComplexJSONType,
     IFundamentalJSONType,
     ISimpleJSONType,

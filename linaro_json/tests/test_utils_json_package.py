@@ -22,7 +22,7 @@ Test cases for launch_control.json_utils module
 
 from unittest import TestCase
 
-from linaro_python_json import (
+from linaro_json import (
         ClassRegistry,
         DefaultClassRegistry,
         IComplexJSONType,

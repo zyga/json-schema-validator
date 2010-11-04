@@ -22,16 +22,17 @@ from setuptools import setup, find_packages
 
 
 setup(
-        name = 'linaro-python-json',
+        name = 'linaro-json',
         version = "0.0.1",
         author = "Zygmunt Krynicki",
         author_email = "zygmunt.krynicki@linaro.org",
-        packages = ['linaro_python_json'],
+        packages = ['linaro_json', 'linaro_json.proxies',
+                    'linaro_json.tests'],
         long_description = """
         Collection of JSON utilities developed by the Linaro infrastructure team
         """,
         url='https://launchpad.net/linaro-python-json',
-        test_suite='linaro_python_json.tests.test_suite',
+        test_suite='linaro_json.tests.test_suite',
         classifiers=[
             "Development Status :: 3 - Alpha",
             "Intended Audience :: Developers",

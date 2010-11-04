@@ -309,18 +309,18 @@ So here's how it works:
     * All the methods are the same as before.
 
 Instead of doing a full blown example here I'd like to point you to the
-datetime_proxy class defined in the linaro_python_json.proxies.datetime
+datetime_proxy class defined in the linaro_json.proxies.datetime
 module.
 """
 
 # Required since we have json module that is also defined in the
 # standard library.
 
-from linaro_python_json.impl import json
-from linaro_python_json.decoder import PluggableJSONDecoder
-from linaro_python_json.encoder import PluggableJSONEncoder
-from linaro_python_json.interface import (
+from linaro_json.impl import json
+from linaro_json.decoder import PluggableJSONDecoder
+from linaro_json.encoder import PluggableJSONEncoder
+from linaro_json.interface import (
     IFundamentalJSONType, ISimpleJSONType, IComplexJSONType)
-from linaro_python_json.proxy_registry import (
+from linaro_json.proxy_registry import (
     ClassRegistry, DefaultClassRegistry)
-from linaro_python_json.pod import PlainOldData
+from linaro_json.pod import PlainOldData

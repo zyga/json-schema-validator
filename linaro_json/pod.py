@@ -17,7 +17,7 @@
 # along with Launch Control.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from linaro_python_json.interface import IComplexJSONType
+from linaro_json.interface import IComplexJSONType
 
 
 class PlainOldData(IComplexJSONType):

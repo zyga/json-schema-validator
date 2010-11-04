@@ -22,8 +22,8 @@ Module with proxy type for decimal.Decimal
 
 from decimal import Decimal
 
-from linaro_python_json.interface import IFundamentalJSONType
-from linaro_python_json.proxy_registry import DefaultClassRegistry
+from linaro_json.interface import IFundamentalJSONType
+from linaro_json.proxy_registry import DefaultClassRegistry
 
 class DecimalProxy(IFundamentalJSONType):
     """
