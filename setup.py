@@ -23,7 +23,7 @@ from setuptools import setup, find_packages
 
 setup(
         name = 'linaro-json',
-        version = "0.0.1",
+        version = "0.0.2",
         author = "Zygmunt Krynicki",
         author_email = "zygmunt.krynicki@linaro.org",
         packages = ['linaro_json', 'linaro_json.proxies',
