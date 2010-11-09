@@ -21,8 +21,8 @@ Package with unit tests for launch_control
 """
 
 import doctest
+import testscenarios
 import unittest
-
 
 def app_modules():
     return [
@@ -38,11 +38,13 @@ def app_modules():
             'linaro_json.proxies.timedelta_proxy',
             'linaro_json.proxies.uuid_proxy',
             'linaro_json.proxy_registry',
+            'linaro_json.schema',
             ]
 
 
 def test_modules():
     return [
+            'linaro_json.tests.test_schema',
             'linaro_json.tests.test_utils_json_package',
             ]
 
@@ -57,7 +59,7 @@ def test_suite():
     loader = unittest.TestLoader()
     for name in modules:
         unit_suite = loader.loadTestsFromName(name)
-        suite.addTests(unit_suite)
+        suite.addTests(testscenarios.generate_scenarios(unit_suite))
         doc_suite = doctest.DocTestSuite(name)
         suite.addTests(doc_suite)
     return suite
