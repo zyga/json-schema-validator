@@ -415,12 +415,12 @@ class SchemaTests(unittest.TestCase):
                 'pattern': None,
             },
         }),
-        ("pattern_simple", {
-            'schema': '{"pattern": "foo|bar"}',
-            'expected': {
-                'pattern': re.compile('foo|bar'),
-            },
-        }),
+        #("pattern_simple", {
+        #    'schema': '{"pattern": "foo|bar"}',
+        #    'expected': {
+        #        'pattern': re.compile('foo|bar'),
+        #    },
+        #}),
         ("pattern_broken", {
             'schema': '{"pattern": "[unterminated"}',
             'access': 'pattern',
