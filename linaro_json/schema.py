@@ -52,7 +52,7 @@ class Schema(object):
 
         The return value is always a list of correct JSON types.
         Correct JSON types are one of the pre-defined simple types or
-        another schema object. 
+        another schema object.
 
         List of built-in simple types:
             * 'string'
@@ -127,7 +127,7 @@ class Schema(object):
         return value
 
     @property
-    def requires(self): 
+    def requires(self):
         value = self._schema.get("requires", {})
         if not isinstance(value, (basestring, dict)):
             raise SchemaError(
@@ -338,7 +338,7 @@ class Schema(object):
                 "divisibleBy value {0!r} cannot be"
                 " negative".format(value))
         return value
-    
+
     @property
     def disallow(self):
         value = self._schema.get("disallow", None)
