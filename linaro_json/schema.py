@@ -5,6 +5,7 @@ Note: only a subset of schema features are currently supported.
 
 See: json-schema.org for details
 """
+import datetime
 import decimal
 import itertools
 import re
@@ -431,7 +432,24 @@ class Validator(object):
             self._obj_stack.pop()
         else:
             self._validate_enum(schema, obj)
+            self._validate_format(schema, obj)
         self._report_unsupported(schema)
+
+    def _validate_format(self, schema, obj):
+        format = schema.format
+        if format is None:
+            return
+        if format == 'date-time':
+            try:
+                DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
+                datetime.datetime.strptime(obj, DATE_TIME_FORMAT)
+            except ValueError:
+                raise ValidationError(
+                    "{obj!r} is not a string representing date-time".format(
+                        obj=obj))
+        else:
+            raise NotImplementedError("format {0!r} is not supported".format(format))
+
 
     def _report_unsupported(self, schema):
         if schema.minimum is not None:
@@ -450,8 +468,6 @@ class Validator(object):
             raise NotImplementedError("minLength is not supported")
         if schema.maxLength is not None:
             raise NotImplementedError("maxLength is not supported")
-        if schema.format is not None:
-            raise NotImplementedError("format is not supported")
         if schema.contentEncoding is not None:
             raise NotImplementedError("contentEncoding is not supported")
         if schema.divisibleBy != 1:
