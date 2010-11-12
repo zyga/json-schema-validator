@@ -598,7 +598,6 @@ class Validator(object):
                     type=json_type),
                 schema_suffix=".type")
 
-
     def _validate_format(self):
         fmt = self._schema.format
         obj = self._object
