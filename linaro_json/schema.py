@@ -24,8 +24,32 @@ class SchemaError(ValueError):
 
 class ValidationError(ValueError):
     """
-    A bug in the validated object prevents the program from working
+    A bug in the validated object prevents the program from working.
+
+    The error instance has several interesting properties:
+        :message: old and verbose message that contains less helpful
+        message and lots of JSON data (deprecated).
+        :new_message: short and concise message about the problem
+        :object_expr: a JavaScript expression that evaluates to the
+        object that failed to validate. The expression always starts
+        with a root object called 'object'.
+        :schema_expr: a JavaScript expression that evaluats to the
+        schema that was checked at the time validation failed. The
+        expression always starts with a root object called 'schema'.
     """
+
+    def __init__(self, message, new_message=None,
+                 object_expr=None, schema_expr=None):
+        self.message = message
+        self.new_message = new_message
+        self.object_expr = object_expr
+        self.schema_expr = schema_expr
+
+    def __cmp__(self, other):
+        return cmp(self.message, other.message) or cmp(self.new_message, self.other_messge)
+
+    def __repr__(self):
+        return self.message
 
 
 class Schema(object):
@@ -392,7 +416,28 @@ class Validator(object):
     }
 
     def __init__(self):
-        self._obj_stack = []
+        self._schema_stack = []
+        self._object_stack = []
+
+    def _push_object(self, obj, path):
+        self._object_stack.append((obj, path))
+
+    def _pop_object(self):
+        self._object_stack.pop()
+
+    def _push_schema(self, schema, path):
+        self._schema_stack.append((schema, path))
+
+    def _pop_schema(self):
+        self._schema_stack.pop()
+
+    @property
+    def _object(self):
+        return self._object_stack[-1][0]
+
+    @property
+    def _schema(self):
+        return self._schema_stack[-1][0]
 
     @classmethod
     def validate(cls, schema, obj):
@@ -408,50 +453,91 @@ class Validator(object):
             raise ValueError(
                 "schema value {0!r} is not a Schema"
                 " object".format(schema))
-        cls()._validate_no_push(schema, obj)
+        self = cls()
+        self.validate_toplevel(schema, obj)
         return True
 
-    def _validate(self, schema, obj):
-        self._obj_stack.append(obj)
-        try:
-            self._validate_no_push(schema, obj)
-        finally:
-            self._obj_stack.pop()
+    def _get_object_expression(self):
+        return "".join(map(lambda x: x[1], self._object_stack))
 
-    def _validate_no_push(self, schema, obj):
-        self._validate_type(schema, obj)
-        self._validate_requires(schema, obj)
+    def _get_schema_expression(self):
+        return "".join(map(lambda x: x[1], self._schema_stack))
+
+    def validate_toplevel(self, schema, obj):
+        self._object_stack = []
+        self._schema_stack = []
+        self._push_schema(schema, "schema")
+        self._push_object(obj, "object")
+        self._validate()
+        self._pop_schema()
+        self._pop_object()
+
+    def _validate(self):
+        obj = self._object
+        self._validate_type()
+        self._validate_requires()
         if isinstance(obj, dict):
-            self._obj_stack.append(obj)
-            self._validate_properties(schema, obj)
-            self._validate_additional_properties(schema, obj)
-            self._obj_stack.pop()
+            self._validate_properties()
+            self._validate_additional_properties()
         elif isinstance(obj, list):
-            self._obj_stack.append(obj)
-            self._validate_items(schema, obj)
-            self._obj_stack.pop()
+            self._validate_items()
         else:
-            self._validate_enum(schema, obj)
-            self._validate_format(schema, obj)
-        self._report_unsupported(schema)
+            self._validate_enum()
+            self._validate_format()
+        self._report_unsupported()
 
-    def _validate_format(self, schema, obj):
-        format = schema.format
-        if format is None:
-            return
-        if format == 'date-time':
-            try:
-                DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
-                datetime.datetime.strptime(obj, DATE_TIME_FORMAT)
-            except ValueError:
-                raise ValidationError(
-                    "{obj!r} is not a string representing date-time".format(
-                        obj=obj))
-        else:
-            raise NotImplementedError("format {0!r} is not supported".format(format))
+    def _report_error(self, legacy_message, new_message=None,
+                      object_suffix=None, schema_suffix=None):
+        """
+        Report an error during validation.
 
+        There are two error messages. The legacy message is used for
+        backwards compatibility and usually contains the object
+        (possibly very large) that failed to validate. The new message
+        is much better as it contains just a short message on what went
+        wrong. User code can inspect object_expr and schema_expr to see
+        which part of the object failed to validate against which part
+        of the schema.
 
-    def _report_unsupported(self, schema):
+        The schema_suffix, if provided, is appended to the schema_expr.
+        This is quite handy to specify the bit that the validator looked
+        at (such as the type or optional flag, etc). object_suffix
+        serves the same purpose but is used for object expressions
+        instead.
+        """
+        object_expr = self._get_object_expression()
+        if object_suffix:
+            object_expr += object_suffix
+        schema_expr = self._get_schema_expression()
+        if schema_suffix:
+            schema_expr += schema_suffix
+        raise ValidationError(legacy_message, new_message,
+                              object_expr, schema_expr)
+
+    def _push_property_schema(self, prop):
+        """
+        Construct a sub-schema from the value of the specified attribute
+        of the current schema.
+        """
+        schema = Schema(self._schema.properties[prop])
+        self._push_schema(schema, ".properties." + prop)
+
+    def _push_additional_property_schema(self):
+        schema = Schema(self._schema.additionalProperties)
+        self._push_schema(schema, ".additionalProperties")
+
+    def _push_array_schema(self):
+        schema = Schema(self._schema.items)
+        self._push_schema(schema, ".items")
+
+    def _push_array_item_object(self, index):
+        self._push_object(self._object[index], "[%d]" % index)
+
+    def _push_property_object(self, prop):
+        self._push_object(self._object[prop], "." + prop)
+
+    def _report_unsupported(self):
+        schema = self._schema
         if schema.minimum is not None:
             raise NotImplementedError("minimum is not supported")
         if schema.maximum is not None:
@@ -475,7 +561,9 @@ class Validator(object):
         if schema.disallow is not None:
             raise NotImplementedError("disallow is not supported")
 
-    def _validate_type(self, schema, obj):
+    def _validate_type(self):
+        obj = self._object
+        schema = self._schema
         for json_type in schema.type:
             if json_type == "any":
                 return
@@ -484,14 +572,18 @@ class Validator(object):
                 # way to test for isinstance(something, bool) that would
                 # not catch isinstance(1, bool) :/
                 if obj is not True and obj is not False:
-                    raise ValidationError(
+                    self._report_error(
                         "{obj!r} does not match type {type!r}".format(
-                            obj=obj, type=json_type))
+                            obj=obj, type=json_type),
+                        "Object has incorrect type (expected boolean)",
+                        schema_suffix=".type")
                 break
             elif isinstance(json_type, dict):
                 # Nested type check. This is pretty odd case. Here we
                 # don't change our object stack (it's the same object).
-                self._validate_no_push(Schema(json_type), obj)
+                self._push_schema(Schema(json_type), ".type")
+                self._validate()
+                self._pop_schema()
                 break
             else:
                 # Simple type check
@@ -499,106 +591,173 @@ class Validator(object):
                     # First one that matches, wins
                     break
         else:
-            raise ValidationError(
+            self._report_error(
                 "{obj!r} does not match type {type!r}".format(
-                    obj=obj, type=json_type))
+                    obj=obj, type=json_type),
+                "Object has incorrect type (expected {type})".format(
+                    type=json_type),
+                schema_suffix=".type")
 
-    def _validate_properties(self, schema, obj):
+
+    def _validate_format(self):
+        fmt = self._schema.format
+        obj = self._object
+        if fmt is None:
+            return
+        if fmt == 'date-time':
+            try:
+                DATE_TIME_FORMAT = "%Y-%m-%dT%H:%M:%SZ"
+                datetime.datetime.strptime(obj, DATE_TIME_FORMAT)
+            except ValueError:
+                self._report_error(
+                    "{obj!r} is not a string representing JSON date-time".format(
+                        obj=obj),
+                    "Object is not a string representing JSON date-time",
+                    schema_suffix=".format")
+        else:
+            raise NotImplementedError("format {0!r} is not supported".format(format))
+
+    def _validate_properties(self):
+        obj = self._object
+        schema = self._schema
         assert isinstance(obj, dict)
-        for prop, prop_schema_data in schema.properties.iteritems():
-            prop_schema = Schema(prop_schema_data)
+        for prop in schema.properties.iterkeys():
+            self._push_property_schema(prop)
             if prop in obj:
-                self._validate(prop_schema, obj[prop])
+                self._push_property_object(prop)
+                self._validate()
+                self._pop_object()
             else:
-                if not prop_schema.optional:
-                    raise ValidationError(
-                        "{obj!r} does not have property"
-                        " {prop!r}".format( obj=obj, prop=prop))
+                if not self._schema.optional:
+                    self._report_error(
+                        "{obj!r} does not have property {prop!r}".format(
+                            obj=obj, prop=prop),
+                        "Object lacks property {prop!r}".format(
+                            prop=prop),
+                        schema_suffix=".optional")
+            self._pop_schema()
 
-    def _validate_additional_properties(self, schema, obj):
+    def _validate_additional_properties(self):
+        obj = self._object
         assert isinstance(obj, dict)
-        if schema.additionalProperties is False:
+        if self._schema.additionalProperties is False:
             # Additional properties are disallowed
             # Report exception for each unknown property
             for prop in obj.iterkeys():
-                if prop not in schema.properties:
-                    raise ValidationError(
+                if prop not in self._schema.properties:
+                    self._report_error(
                         "{obj!r} has unknown property {prop!r} and"
                         " additionalProperties is false".format(
-                            obj=obj, prop=prop))
+                            obj=obj, prop=prop),
+                        "Object has unknown property {prop!r} but"
+                        " additional properties are disallowed".format(
+                            prop=prop),
+                        schema_suffix=".additionalProperties")
         else:
-            additional_schema = Schema(schema.additionalProperties)
             # Check each property against this object
-            for prop_value in obj.itervalues(): 
-                self._validate(additional_schema, prop_value)
+            self._push_additional_property_schema()
+            for prop in obj.iterkeys():
+                self._push_property_object(prop)
+                self._validate()
+                self._pop_object()
+            self._pop_schema()
 
-    def _validate_enum(self, schema, obj):
+    def _validate_enum(self):
+        obj = self._object
+        schema = self._schema
         if schema.enum is not None:
             for allowed_value in schema.enum:
                 if obj == allowed_value:
                     break
             else:
-                raise ValidationError(
+                self._report_error(
                     "{obj!r} does not match any value in enumeration"
-                    " {enum!r}".format(obj=obj, enum=schema.enum))
+                    " {enum!r}".format(obj=obj, enum=schema.enum),
+                    "Object does not match any value in enumeration",
+                    schema_suffix=".enum")
 
-    def _validate_items(self,  schema, obj):
+    def _validate_items(self):
+        obj = self._object
+        schema = self._schema
         assert isinstance(obj, list)
         items_schema_json = schema.items
         if items_schema_json == {}:
             # default value, don't do anything
             return
         if isinstance(items_schema_json, dict):
-            items_schema = Schema(items_schema_json)
-            for item in obj:
-                self._validate(items_schema, item)
+            self._push_array_schema()
+            for index, item in enumerate(obj):
+                self._push_array_item_object(index)
+                self._validate()
+                self._pop_object()
+            self._pop_schema()
         elif isinstance(items_schema_json, list):
             if len(obj) < len(items_schema_json):
-                # If our array is shorter than the schema then
+                # If our data array is shorter than the schema then
                 # validation fails. Longer arrays are okay (during this
                 # step) as they are validated based on
                 # additionalProperties schema
-                raise ValidationError(
+                self._report_error(
                     "{obj!r} is shorter than array schema {schema!r}".
-                    format(obj=obj, schema=items_schema_json))
+                    format(obj=obj, schema=items_schema_json),
+                    "Object array is shorter than schema array",
+                    schema_suffix=".items")
             if len(obj) != len(items_schema_json) and schema.additionalProperties is False:
                 # If our array is not exactly the same size as the
                 # schema and additional properties are disallowed then
                 # validation fails
-                raise ValidationError(
+                self._report_error(
                     "{obj!r} is not of the same length as array schema"
                     " {schema!r} and additionalProperties is"
-                    " false".format(obj=obj, schema=items_schema_json))
+                    " false".format(obj=obj, schema=items_schema_json),
+                    "Object array is not of the same length as schema array",
+                    schema_suffix=".items")
             # Validate each array element using schema for the
             # corresponding array index, fill missing values (since
             # there may be more items in our array than in the schema)
             # with additionalProperties which by now is not False
-            for item, item_schema_json in itertools.izip_longest(
-                obj, items_schema_json, fillvalue=schema.additionalProperties):
+            for index, (item, item_schema_json) in enumerate(
+                itertools.izip_longest(
+                    obj, items_schema_json,
+                    fillvalue=schema.additionalProperties)):
                 item_schema = Schema(item_schema_json)
-                self._validate(item_schema, item)
+                if index < len(items_schema_json):
+                    self._push_schema(item_schema, "items[%d]" % index)
+                else:
+                    self._push_schema(item_schema, ".additionalProperties")
+                self._push_array_item_object(index)
+                self._validate()
+                self._pop_schema()
+                self._pop_object()
 
-    def _validate_requires(self, schema, obj):
+    def _validate_requires(self):
+        obj = self._object
+        schema = self._schema
         requires_json = schema.requires
         if requires_json == {}:
             # default value, don't do anything
             return
         # Find our enclosing object in the object stack
-        if len(self._obj_stack) < 2:
-            raise ValidationError(
+        if len(self._object_stack) < 2:
+            self._report_error(
                 "{obj!r} requires that enclosing object matches"
                 " schema {schema!r} but there is no enclosing"
-                " object".format(obj=obj, schema=requires_json))
+                " object".format(obj=obj, schema=requires_json),
+                "Object has no enclosing object that matches schema",
+                schema_suffix=".requires")
         # Note: Parent object can be None, (e.g. a null property)
-        parent_obj = self._obj_stack[-2]
+        parent_obj = self._object_stack[-2][0]
         if isinstance(requires_json, basestring):
             # This is a simple property test
-            if (not isinstance(parent_obj, dict) 
+            if (not isinstance(parent_obj, dict)
                 or requires_json not in parent_obj):
-                raise ValidationError(
+                self._report_error(
                     "{obj!r} requires presence of property {requires!r}"
                     " in the same object".format(
-                        obj=obj, requires=requires_json))
+                        obj=obj, requires=requires_json),
+                    "Enclosing object does not have property"
+                    " {prop!r}".format(prop=requires_json),
+                    schema_suffix=".requires")
         elif isinstance(requires_json, dict):
             # Requires designates a whole schema, the enclosing object
             # must match against that schema.
@@ -609,9 +768,11 @@ class Validator(object):
             # instantiate a new validator with a subset of our current
             # history here.
             sub_validator = Validator()
-            sub_validator._obj_stack = self._obj_stack[:-2]
-            sub_validator._validate_no_push(
-                Schema(requires_json), parent_obj)
+            sub_validator._object_stack = self._object_stack[:-1]
+            sub_validator._schema_stack = self._schema_stack[:]
+            sub_validator._push_schema(
+                Schema(requires_json), ".requires")
+            sub_validator._validate()
 
 
 def validate(schema_text, data_text):
