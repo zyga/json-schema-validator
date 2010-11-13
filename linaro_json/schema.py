@@ -48,8 +48,11 @@ class ValidationError(ValueError):
     def __cmp__(self, other):
         return cmp(self.message, other.message) or cmp(self.new_message, self.other_messge)
 
-    def __repr__(self):
-        return self.message
+    def __str__(self):
+        return ("ValidationError: {0} "
+                "object_expr={1!r}, "
+                "schema_expr={2!r})").format(
+                    self.new_message, self.object_expr, self.schema_expr)
 
 
 class Schema(object):
