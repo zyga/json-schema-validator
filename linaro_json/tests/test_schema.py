@@ -1411,24 +1411,57 @@ class ValidatorTests(unittest.TestCase):
         }),
     ]
 
-    def test_validate(self):
+    def test_validator_does_not_raise_an_exception(self):
         if hasattr(self, 'raises'):
-            self.assertRaises(
-                type(self.raises), validate, self.schema, self.data)
-            try:
-                validate(self.schema, self.data)
-            except type(self.raises) as ex:
-                self.assertEqual(ex.message, self.raises.message)
-                if self.raises.new_message is not None:
-                    self.assertEqual(ex.new_message, self.raises.new_message)
-                self.assertEqual(ex.object_expr, self.object_expr)
-                self.assertEqual(ex.schema_expr, self.schema_expr)
-            except Exception as ex:
-                self.fail("Raised exception {0!r} instead of {1!r}".format(
-                    ex, self.raises))
+            return
+        self.assertEqual(
+            True, validate(self.schema, self.data))
+
+    def test_validator_raises_validation_error(self):
+        if not hasattr(self, 'raises'):
+            return
+        self.assertRaises(
+            type(self.raises), validate, self.schema, self.data)
+
+    def test_validation_error_has_proper_message(self):
+        if not hasattr(self, 'raises'):
+            return
+        try:
+            validate(self.schema, self.data)
+        except type(self.raises) as ex:
+            self.assertEqual(ex.message, self.raises.message)
         else:
-            self.assertEqual(
-                True, validate(self.schema, self.data))
+            self.fail("Test did not raise an exception")
+
+    def test_validation_error_has_proper_new_message(self):
+        if not hasattr(self, 'raises'):
+            return
+        try:
+            validate(self.schema, self.data)
+        except type(self.raises) as ex:
+            self.assertEqual(ex.new_message, self.raises.new_message)
+        else:
+            self.fail("Test did not raise an exception")
+
+    def test_validation_error_has_proper_object_expr(self):
+        if not hasattr(self, 'raises'):
+            return
+        try:
+            validate(self.schema, self.data)
+        except type(self.raises) as ex:
+            self.assertEqual(ex.object_expr, self.object_expr)
+        else:
+            self.fail("Test did not raise an exception")
+
+    def test_validation_error_has_proper_schema_expr(self):
+        if not hasattr(self, 'raises'):
+            return
+        try:
+            validate(self.schema, self.data)
+        except type(self.raises) as ex:
+            self.assertEqual(ex.schema_expr, self.schema_expr)
+        else:
+            self.fail("Test did not raise an exception")
 
     def __str__(self):
         """
