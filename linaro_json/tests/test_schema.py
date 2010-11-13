@@ -792,7 +792,8 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"type": "number"}',
             'data': '"foobar"',
             'raises': ValidationError(
-                "'foobar' does not match type 'number'"),
+                "'foobar' does not match type 'number'",
+                "Object has incorrect type (expected number)"),
             'object_expr': 'object',
             'schema_expr': 'schema.type',
         }),
@@ -800,7 +801,8 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"type": "number"}',
             'data': '"3"',
             'raises': ValidationError(
-                "'3' does not match type 'number'"),
+                "'3' does not match type 'number'",
+                "Object has incorrect type (expected number)"),
             'object_expr': 'object',
             'schema_expr': 'schema.type',
         }),
