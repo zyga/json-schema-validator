@@ -4,7 +4,9 @@ Unit tests for JSON schema
 
 import re
 import simplejson
-import unittest
+
+import testtools
+import testscenarios
 
 from linaro_json.schema import (
     Schema,
@@ -13,7 +15,8 @@ from linaro_json.schema import (
     validate,
 )
 
-class SchemaTests(unittest.TestCase):
+
+class SchemaTests(testtools.TestCase, testscenarios.TestWithScenarios):
 
     scenarios = [
         ('type_default', {
@@ -746,7 +749,8 @@ class SchemaTests(unittest.TestCase):
                       "or 'access' and 'raises' scenario attributes")
 
 
-class ValidatorFailureTests(unittest.TestCase):
+class ValidatorFailureTests(testtools.TestCase,
+                            testscenarios.TestWithScenarios):
 
     scenarios = [
         ("type_string_got_null", {
@@ -1189,52 +1193,29 @@ class ValidatorFailureTests(unittest.TestCase):
         }),
     ]
 
-    def test_validator_raises_validation_error(self):
-        self.assertRaises(
-            type(self.raises), validate, self.schema, self.data)
-
     def test_validation_error_has_proper_message(self):
-        try:
-            validate(self.schema, self.data)
-        except type(self.raises) as ex:
-            self.assertEqual(ex.message, self.raises.message)
-        else:
-            self.fail("Test did not raise an exception")
+        ex = self.assertRaises(ValidationError,
+                               validate, self.schema, self.data)
+        self.assertEqual(ex.message, self.raises.message)
 
     def test_validation_error_has_proper_new_message(self):
-        try:
-            validate(self.schema, self.data)
-        except type(self.raises) as ex:
-            self.assertEqual(ex.new_message, self.raises.new_message)
-        else:
-            self.fail("Test did not raise an exception")
+        ex = self.assertRaises(ValidationError,
+                               validate, self.schema, self.data)
+        self.assertEqual(ex.new_message, self.raises.new_message)
 
     def test_validation_error_has_proper_object_expr(self):
-        try:
-            validate(self.schema, self.data)
-        except type(self.raises) as ex:
-            self.assertEqual(ex.object_expr, self.object_expr)
-        else:
-            self.fail("Test did not raise an exception")
+        ex = self.assertRaises(ValidationError,
+                               validate, self.schema, self.data)
+        self.assertEqual(ex.object_expr, self.object_expr)
 
     def test_validation_error_has_proper_schema_expr(self):
-        try:
-            validate(self.schema, self.data)
-        except type(self.raises) as ex:
-            self.assertEqual(ex.schema_expr, self.schema_expr)
-        else:
-            self.fail("Test did not raise an exception")
-
-    def __str__(self):
-        """
-        Override TestCase to report the scenario name.
-
-        TODO: Replace this with TestCaseWithScenarios in subsequent pipe
-        """
-        return self.id()
+        ex = self.assertRaises(ValidationError,
+                               validate, self.schema, self.data)
+        self.assertEqual(ex.schema_expr, self.schema_expr)
 
 
-class ValidatorSuccessTests(unittest.TestCase):
+class ValidatorSuccessTests(testtools.TestCase,
+                            testscenarios.TestWithScenarios):
 
     scenarios = [
         ("type_string_got_string", {
@@ -1464,12 +1445,3 @@ class ValidatorSuccessTests(unittest.TestCase):
     def test_validator_does_not_raise_an_exception(self):
         self.assertEqual(
             True, validate(self.schema, self.data))
-
-    def __str__(self):
-        """
-        Override TestCase to report the scenario name.
-
-        TODO: Replace this with TestCaseWithScenarios in subsequent pipe
-        """
-        return self.id()
-
