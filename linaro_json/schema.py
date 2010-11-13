@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """
 JSON schema validator for python
 Note: only a subset of schema features are currently supported.
