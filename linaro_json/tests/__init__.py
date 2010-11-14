@@ -21,7 +21,6 @@ Package with unit tests for launch_control
 """
 
 import doctest
-import testscenarios
 import unittest
 
 def app_modules():
@@ -58,8 +57,8 @@ def test_suite():
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
     for name in modules:
-        unit_suite = loader.loadTestsFromName(name)
-        suite.addTests(testscenarios.generate_scenarios(unit_suite))
-        doc_suite = doctest.DocTestSuite(name)
-        suite.addTests(doc_suite)
+        tests = loader.loadTestsFromName(name)
+        suite.addTests(tests)
+        doctests = doctest.DocTestSuite(name)
+        suite.addTests(doctests)
     return suite

@@ -5,8 +5,8 @@ Unit tests for JSON schema
 import re
 import simplejson
 
-import testtools
-import testscenarios
+from testtools import TestCase
+from testscenarios import TestWithScenarios
 
 from linaro_json.schema import (
     Schema,
@@ -16,7 +16,7 @@ from linaro_json.schema import (
 )
 
 
-class SchemaTests(testtools.TestCase, testscenarios.TestWithScenarios):
+class SchemaTests(TestWithScenarios, TestCase):
 
     scenarios = [
         ('type_default', {
@@ -749,8 +749,7 @@ class SchemaTests(testtools.TestCase, testscenarios.TestWithScenarios):
                       "or 'access' and 'raises' scenario attributes")
 
 
-class ValidatorFailureTests(testtools.TestCase,
-                            testscenarios.TestWithScenarios):
+class ValidatorFailureTests(TestWithScenarios, TestCase):
 
     scenarios = [
         ("type_string_got_null", {
@@ -1214,8 +1213,7 @@ class ValidatorFailureTests(testtools.TestCase,
         self.assertEqual(ex.schema_expr, self.schema_expr)
 
 
-class ValidatorSuccessTests(testtools.TestCase,
-                            testscenarios.TestWithScenarios):
+class ValidatorSuccessTests(TestWithScenarios, TestCase):
 
     scenarios = [
         ("type_string_got_string", {
