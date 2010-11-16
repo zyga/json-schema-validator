@@ -1,4 +1,3 @@
-#!/usr/bin/python
 """
 JSON schema validator for python
 Note: only a subset of schema features are currently supported.
@@ -45,11 +44,12 @@ class ValidationError(ValueError):
         self.object_expr = object_expr
         self.schema_expr = schema_expr
 
-    def __cmp__(self, other):
-        return cmp(self.message, other.message) or cmp(self.new_message, self.other_messge)
-
-    def __repr__(self):
-        return self.message
+    def __str__(self):
+        return ("ValidationError: {0} "
+                "object_expr={1!r}, "
+                "schema_expr={2!r})").format(
+                    self.new_message, self.object_expr,
+                    self.schema_expr)
 
 
 class Schema(object):
@@ -487,7 +487,7 @@ class Validator(object):
         self._report_unsupported()
 
     def _report_error(self, legacy_message, new_message=None,
-                      object_suffix=None, schema_suffix=None):
+                      schema_suffix=None):
         """
         Report an error during validation.
 
@@ -506,13 +506,11 @@ class Validator(object):
         instead.
         """
         object_expr = self._get_object_expression()
-        if object_suffix:
-            object_expr += object_suffix
         schema_expr = self._get_schema_expression()
         if schema_suffix:
             schema_expr += schema_suffix
-        raise ValidationError(legacy_message, new_message,
-                              object_expr, schema_expr)
+        raise ValidationError(legacy_message, new_message, object_expr,
+                              schema_expr)
 
     def _push_property_schema(self, prop):
         """

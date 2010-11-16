@@ -324,3 +324,5 @@ from linaro_json.interface import (
 from linaro_json.proxy_registry import (
     ClassRegistry, DefaultClassRegistry)
 from linaro_json.pod import PlainOldData
+from linaro_json.schema import (
+    Schema, Validator, SchemaError, ValidationError)

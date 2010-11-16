@@ -4,7 +4,9 @@ Unit tests for JSON schema
 
 import re
 import simplejson
-import unittest
+
+from testtools import TestCase
+from testscenarios import TestWithScenarios
 
 from linaro_json.schema import (
     Schema,
@@ -13,7 +15,8 @@ from linaro_json.schema import (
     validate,
 )
 
-class SchemaTests(unittest.TestCase):
+
+class SchemaTests(TestWithScenarios, TestCase):
 
     scenarios = [
         ('type_default', {
@@ -746,13 +749,9 @@ class SchemaTests(unittest.TestCase):
                       "or 'access' and 'raises' scenario attributes")
 
 
-class ValidatorTests(unittest.TestCase):
+class ValidatorFailureTests(TestWithScenarios, TestCase):
 
     scenarios = [
-        ("type_string_got_string", {
-            'schema': '{"type": "string"}',
-            'data': '"foobar"'
-        }),
         ("type_string_got_null", {
             'schema': '{"type": "string"}',
             'data': 'null',
@@ -771,14 +770,6 @@ class ValidatorTests(unittest.TestCase):
             'object_expr': 'object',
             'schema_expr': 'schema.type',
         }),
-        ("type_number_got_integer", {
-            'schema': '{"type": "number"}',
-            'data': '1',
-        }),
-        ("type_number_number_float", {
-            'schema': '{"type": "number"}',
-            'data': '1.1',
-        }),
         ("type_number_got_null", {
             'schema': '{"type": "number"}',
             'data': 'null',
@@ -792,7 +783,8 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"type": "number"}',
             'data': '"foobar"',
             'raises': ValidationError(
-                "'foobar' does not match type 'number'"),
+                "'foobar' does not match type 'number'",
+                "Object has incorrect type (expected number)"),
             'object_expr': 'object',
             'schema_expr': 'schema.type',
         }),
@@ -800,17 +792,10 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"type": "number"}',
             'data': '"3"',
             'raises': ValidationError(
-                "'3' does not match type 'number'"),
+                "'3' does not match type 'number'",
+                "Object has incorrect type (expected number)"),
             'object_expr': 'object',
             'schema_expr': 'schema.type',
-        }),
-        ("type_integer_got_integer_one", {
-            'schema': '{"type": "integer"}',
-            'data': '1'
-        }),
-        ("type_integer_got_integer", {
-            'schema': '{"type": "integer"}',
-            'data': '5'
         }),
         ("type_integer_got_float", {
             'schema': '{"type": "integer"}',
@@ -829,14 +814,6 @@ class ValidatorTests(unittest.TestCase):
                 "Object has incorrect type (expected integer)"),
             'object_expr': 'object',
             'schema_expr': 'schema.type',
-        }),
-        ("type_boolean_got_true", {
-            'schema': '{"type": "boolean"}',
-            'data': 'true',
-        }),
-        ("type_boolean_got_false", {
-            'schema': '{"type": "boolean"}',
-            'data': 'true',
         }),
         ("type_boolean_got_null", {
             'schema': '{"type": "boolean"}',
@@ -874,10 +851,6 @@ class ValidatorTests(unittest.TestCase):
             'object_expr': 'object',
             'schema_expr': 'schema.type',
         }),
-        ("type_object_got_object", {
-            'schema': '{"type": "object"}',
-            'data': '{}'
-        }),
         ("type_object_got_integer", {
             'schema': '{"type": "object"}',
             'data': '1',
@@ -896,10 +869,6 @@ class ValidatorTests(unittest.TestCase):
             'object_expr': 'object',
             'schema_expr': 'schema.type',
         }),
-        ("type_array_got_array", {
-            'schema': '{"type": "array"}',
-            'data': '[]'
-        }),
         ("type_array_got_null", {
             'schema': '{"type": "array"}',
             'data': 'null',
@@ -917,10 +886,6 @@ class ValidatorTests(unittest.TestCase):
                 "Object has incorrect type (expected array)"),
             'object_expr': 'object',
             'schema_expr': 'schema.type',
-        }),
-        ("type_null_got_null", {
-            'schema': '{"type": "null"}',
-            'data': 'null',
         }),
         ("type_null_got_empty_string", {
             'schema': '{"type": "null"}',
@@ -958,57 +923,6 @@ class ValidatorTests(unittest.TestCase):
             'object_expr': 'object',
             'schema_expr': 'schema.type',
         }),
-        ("type_any_got_null", {
-            'schema': '{"type": "any"}',
-            'data': 'null',
-        }),
-        ("type_any_got_integer", {
-            'schema': '{"type": "any"}',
-            'data': '5',
-        }),
-        ("type_any_got_boolean", {
-            'schema': '{"type": "any"}',
-            'data': 'false',
-        }),
-        ("type_any_got_string", {
-            'schema': '{"type": "any"}',
-            'data': '"foobar"',
-        }),
-        ("type_any_got_array", {
-            'schema': '{"type": "any"}',
-            'data': '[]',
-        }),
-        ("type_any_got_object", {
-            'schema': '{"type": "any"}',
-            'data': '{}',
-        }),
-        ("type_nested_schema_check", {
-            'schema': '{"type": {"type": "number"}}',
-            'data': '5',
-        }),
-        ("property_ignored_on_non_objects", {
-            'schema': '{"properties": {"foo": {"type": "number"}}}',
-            'data': '"foobar"',
-        }),
-        ("property_checks_known_props", {
-            'schema': """
-            {
-                "type": "object",
-                "properties": {
-                    "foo": {
-                        "type": "number"
-                    },
-                    "bar": {
-                        "type": "boolean"
-                    }
-                }
-            }""",
-            'data': """
-            {
-                "foo": 5,
-                "bar": false
-            }"""
-        }),
         ("property_check_is_not_primitive", {
             'schema': """
             {
@@ -1025,19 +939,6 @@ class ValidatorTests(unittest.TestCase):
                 "Object has incorrect type (expected number)"),
             'object_expr': 'object.foo',
             'schema_expr': 'schema.properties.foo.type',
-        }),
-        ("property_check_ignores_missing_optional_properties", {
-            'schema': """
-            {
-                "type": "object",
-                "properties": {
-                    "foo": {
-                        "type": "number",
-                        "optional": true
-                    }
-                }
-            }""",
-            'data': '{}',
         }),
         ("property_check_validates_optional_properties", {
             'schema': """
@@ -1090,27 +991,6 @@ class ValidatorTests(unittest.TestCase):
             'object_expr': 'object',
             'schema_expr': 'schema.additionalProperties',
         }),
-        ("property_check_ignores_normal_properties_when_additionalProperties_is_false", {
-            'schema': """
-            {
-                "type": "object",
-                "properties": {
-                    "foo": {}
-                },
-                "additionalProperties": false
-            }""",
-            'data': '{"foo": 5}',
-        }),
-        ("property_check_validates_additional_properties_using_specified_type_when_additionalProperties_is_an_object", {
-            'schema': """
-            {
-                "type": "object",
-                "additionalProperties": {
-                    "type": "string"
-                }
-            }""",
-            'data': '{"foo": "aaa", "bar": "bbb"}',
-        }),
         ("property_check_validates_additional_properties_using_specified_type_when_additionalProperties_is_an_object_violation", {
             'schema': """
             {
@@ -1126,14 +1006,6 @@ class ValidatorTests(unittest.TestCase):
             'object_expr': 'object.bar',
             'schema_expr': 'schema.additionalProperties.type',
         }),
-        ("enum_check_does_nothing_by_default", {
-            'schema': '{}',
-            'data': '5',
-        }),
-        ("enum_check_verifies_possible_values", {
-            'schema': '{"enum": [1, 2, 3]}',
-            'data': '2',
-        }),
         ("enum_check_reports_unlisted_values", {
             'schema': '{"enum": [1, 2, 3]}',
             'data': '5',
@@ -1143,14 +1015,6 @@ class ValidatorTests(unittest.TestCase):
             'object_expr': 'object',
             'schema_expr': 'schema.enum',
         }),
-        ("items_check_does_nothing_for_non_arrays", {
-            'schema': '{"items": {"type": "string"}}',
-            'data': '5',
-        }),
-        ("items_with_single_schema_applies_to_each_item", {
-            'schema': '{"items": {"type": "string"}}',
-            'data': '["foo", "bar", "froz"]',
-        }),
         ("items_with_single_schema_finds_problems", {
             'schema': '{"items": {"type": "string"}}',
             'data': '["foo", null, "froz"]',
@@ -1159,16 +1023,6 @@ class ValidatorTests(unittest.TestCase):
                 "Object has incorrect type (expected string)"),
             'object_expr': 'object[1]',
             'schema_expr': 'schema.items.type',
-        }),
-        ("items_with_array_schema_applies_to_corresponding_items", {
-            'schema': """
-            {
-                "items": [
-                    {"type": "string"},
-                    {"type": "boolean"}
-                ]
-            }""",
-            'data': '["foo", true]',
         }),
         ("items_with_array_schema_checks_for_too_short_data", {
             'schema': """
@@ -1204,19 +1058,6 @@ class ValidatorTests(unittest.TestCase):
             'object_expr': 'object',
             'schema_expr': 'schema.items',
         }),
-        ("items_with_array_schema_and_additionalProperties", {
-            'schema': """
-            {
-                "items": [
-                    {"type": "string"},
-                    {"type": "boolean"}
-                ],
-                "additionalProperties": {
-                    "type": "number"
-                }
-            }""",
-            'data': '["foo", false, 5, 7.9]',
-        }),
         ("items_with_array_schema_and_additionalProperties_can_find_problems", {
             'schema': """
             {
@@ -1234,22 +1075,6 @@ class ValidatorTests(unittest.TestCase):
                 "Object has incorrect type (expected number)"),
             'object_expr': 'object[4]',
             'schema_expr': 'schema.additionalProperties.type',
-        }),
-        ("requires_with_simple_property_name_does_nothing_when_parent_property_is_not_used", {
-            'schema': """
-            {
-                "properties": {
-                    "foo": {
-                        "optional": true
-                    },
-                    "bar": {
-                        "requires": "foo",
-                        "optional": true
-                    }
-                }
-            }
-            """,
-            'data': '{}',
         }),
         ("requires_with_simple_property_name_can_report_problems", {
             'schema': """
@@ -1299,44 +1124,6 @@ class ValidatorTests(unittest.TestCase):
                 "Enclosing object does not have property 'foo'"),
             'object_expr': 'object.nested.bar',
             'schema_expr': 'schema.properties.nested.properties.bar.requires',
-        }),
-        ("requires_with_simple_property_name_works_when_condition_satisfied", {
-            'schema': """
-            {
-                "properties": {
-                    "foo": {
-                        "optional": true
-                    },
-                    "bar": {
-                        "requires": "foo",
-                        "optional": true
-                    }
-                }
-            }
-            """,
-            'data': '{"foo": null, "bar": null}',
-        }),
-        ("requires_with_schema_name_does_nothing_when_parent_property_is_not_used", {
-            'schema': """
-            {
-                "properties": {
-                    "foo": {
-                        "optional": true
-                    },
-                    "bar": {
-                        "requires": {
-                            "properties": {
-                                "foo": {
-                                    "type": "number"
-                                }
-                            }
-                        },
-                        "optional": true
-                    }
-                }
-            }
-            """,
-            'data': '{}',
         }),
         ("requires_with_schema_can_report_problems", {
             'schema': """
@@ -1394,10 +1181,6 @@ class ValidatorTests(unittest.TestCase):
             'object_expr': 'object.foo',
             'schema_expr': 'schema.properties.bar.requires.properties.foo.type'
         }),
-        ("format_date_time_works", {
-            'schema': '{"format": "date-time"}',
-            'data': '"2010-11-12T14:38:55Z"',
-        }),
         ("format_date_time_finds_problems", {
             'schema': '{"format": "date-time"}',
             'data': '"broken"',
@@ -1409,30 +1192,254 @@ class ValidatorTests(unittest.TestCase):
         }),
     ]
 
-    def test_validate(self):
-        if hasattr(self, 'raises'):
-            self.assertRaises(
-                type(self.raises), validate, self.schema, self.data)
-            try:
-                validate(self.schema, self.data)
-            except type(self.raises) as ex:
-                self.assertEqual(ex.message, self.raises.message)
-                if self.raises.new_message is not None:
-                    self.assertEqual(ex.new_message, self.raises.new_message)
-                self.assertEqual(ex.object_expr, self.object_expr)
-                self.assertEqual(ex.schema_expr, self.schema_expr)
-            except Exception as ex:
-                self.fail("Raised exception {0!r} instead of {1!r}".format(
-                    ex, self.raises))
-        else:
-            self.assertEqual(
-                True, validate(self.schema, self.data))
+    def test_validation_error_has_proper_message(self):
+        ex = self.assertRaises(ValidationError,
+                               validate, self.schema, self.data)
+        self.assertEqual(ex.message, self.raises.message)
 
-    def __str__(self):
-        """
-        Override TestCase to report the scenario name.
+    def test_validation_error_has_proper_new_message(self):
+        ex = self.assertRaises(ValidationError,
+                               validate, self.schema, self.data)
+        self.assertEqual(ex.new_message, self.raises.new_message)
 
-        TODO: Replace this with TestCaseWithScenarios in subsequent pipe
-        """
-        return self.id()
+    def test_validation_error_has_proper_object_expr(self):
+        ex = self.assertRaises(ValidationError,
+                               validate, self.schema, self.data)
+        self.assertEqual(ex.object_expr, self.object_expr)
 
+    def test_validation_error_has_proper_schema_expr(self):
+        ex = self.assertRaises(ValidationError,
+                               validate, self.schema, self.data)
+        self.assertEqual(ex.schema_expr, self.schema_expr)
+
+
+class ValidatorSuccessTests(TestWithScenarios, TestCase):
+
+    scenarios = [
+        ("type_string_got_string", {
+            'schema': '{"type": "string"}',
+            'data': '"foobar"'
+        }),
+        ("type_number_got_integer", {
+            'schema': '{"type": "number"}',
+            'data': '1',
+        }),
+        ("type_number_number_float", {
+            'schema': '{"type": "number"}',
+            'data': '1.1',
+        }),
+        ("type_integer_got_integer_one", {
+            'schema': '{"type": "integer"}',
+            'data': '1'
+        }),
+        ("type_integer_got_integer", {
+            'schema': '{"type": "integer"}',
+            'data': '5'
+        }),
+        ("type_boolean_got_true", {
+            'schema': '{"type": "boolean"}',
+            'data': 'true',
+        }),
+        ("type_boolean_got_false", {
+            'schema': '{"type": "boolean"}',
+            'data': 'true',
+        }),
+        ("type_object_got_object", {
+            'schema': '{"type": "object"}',
+            'data': '{}'
+        }),
+        ("type_array_got_array", {
+            'schema': '{"type": "array"}',
+            'data': '[]'
+        }),
+        ("type_null_got_null", {
+            'schema': '{"type": "null"}',
+            'data': 'null',
+        }),
+        ("type_any_got_null", {
+            'schema': '{"type": "any"}',
+            'data': 'null',
+        }),
+        ("type_any_got_integer", {
+            'schema': '{"type": "any"}',
+            'data': '5',
+        }),
+        ("type_any_got_boolean", {
+            'schema': '{"type": "any"}',
+            'data': 'false',
+        }),
+        ("type_any_got_string", {
+            'schema': '{"type": "any"}',
+            'data': '"foobar"',
+        }),
+        ("type_any_got_array", {
+            'schema': '{"type": "any"}',
+            'data': '[]',
+        }),
+        ("type_any_got_object", {
+            'schema': '{"type": "any"}',
+            'data': '{}',
+        }),
+        ("type_nested_schema_check", {
+            'schema': '{"type": {"type": "number"}}',
+            'data': '5',
+        }),
+        ("property_ignored_on_non_objects", {
+            'schema': '{"properties": {"foo": {"type": "number"}}}',
+            'data': '"foobar"',
+        }),
+        ("property_checks_known_props", {
+            'schema': """
+            {
+                "type": "object",
+                "properties": {
+                    "foo": {
+                        "type": "number"
+                    },
+                    "bar": {
+                        "type": "boolean"
+                    }
+                }
+            }""",
+            'data': """
+            {
+                "foo": 5,
+                "bar": false
+            }"""
+        }),
+        ("property_check_ignores_missing_optional_properties", {
+            'schema': """
+            {
+                "type": "object",
+                "properties": {
+                    "foo": {
+                        "type": "number",
+                        "optional": true
+                    }
+                }
+            }""",
+            'data': '{}',
+        }),
+        ("property_check_ignores_normal_properties_when_additionalProperties_is_false", {
+            'schema': """
+            {
+                "type": "object",
+                "properties": {
+                    "foo": {}
+                },
+                "additionalProperties": false
+            }""",
+            'data': '{"foo": 5}',
+        }),
+        ("property_check_validates_additional_properties_using_specified_type_when_additionalProperties_is_an_object", {
+            'schema': """
+            {
+                "type": "object",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            }""",
+            'data': '{"foo": "aaa", "bar": "bbb"}',
+        }),
+        ("enum_check_does_nothing_by_default", {
+            'schema': '{}',
+            'data': '5',
+        }),
+        ("enum_check_verifies_possible_values", {
+            'schema': '{"enum": [1, 2, 3]}',
+            'data': '2',
+        }),
+        ("items_check_does_nothing_for_non_arrays", {
+            'schema': '{"items": {"type": "string"}}',
+            'data': '5',
+        }),
+        ("items_with_single_schema_applies_to_each_item", {
+            'schema': '{"items": {"type": "string"}}',
+            'data': '["foo", "bar", "froz"]',
+        }),
+        ("items_with_array_schema_applies_to_corresponding_items", {
+            'schema': """
+            {
+                "items": [
+                    {"type": "string"},
+                    {"type": "boolean"}
+                ]
+            }""",
+            'data': '["foo", true]',
+        }),
+        ("items_with_array_schema_and_additionalProperties", {
+            'schema': """
+            {
+                "items": [
+                    {"type": "string"},
+                    {"type": "boolean"}
+                ],
+                "additionalProperties": {
+                    "type": "number"
+                }
+            }""",
+            'data': '["foo", false, 5, 7.9]',
+        }),
+        ("requires_with_simple_property_name_does_nothing_when_parent_property_is_not_used", {
+            'schema': """
+            {
+                "properties": {
+                    "foo": {
+                        "optional": true
+                    },
+                    "bar": {
+                        "requires": "foo",
+                        "optional": true
+                    }
+                }
+            }
+            """,
+            'data': '{}',
+        }),
+        ("requires_with_simple_property_name_works_when_condition_satisfied", {
+            'schema': """
+            {
+                "properties": {
+                    "foo": {
+                        "optional": true
+                    },
+                    "bar": {
+                        "requires": "foo",
+                        "optional": true
+                    }
+                }
+            }
+            """,
+            'data': '{"foo": null, "bar": null}',
+        }),
+        ("requires_with_schema_name_does_nothing_when_parent_property_is_not_used", {
+            'schema': """
+            {
+                "properties": {
+                    "foo": {
+                        "optional": true
+                    },
+                    "bar": {
+                        "requires": {
+                            "properties": {
+                                "foo": {
+                                    "type": "number"
+                                }
+                            }
+                        },
+                        "optional": true
+                    }
+                }
+            }
+            """,
+            'data': '{}',
+        }),
+        ("format_date_time_works", {
+            'schema': '{"format": "date-time"}',
+            'data': '"2010-11-12T14:38:55Z"',
+        }),
+    ]
+
+    def test_validator_does_not_raise_an_exception(self):
+        self.assertEqual(
+            True, validate(self.schema, self.data))
