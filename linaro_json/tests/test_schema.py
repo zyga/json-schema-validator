@@ -757,39 +757,52 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"type": "string"}',
             'data': 'null',
             'raises': ValidationError(
-                "None does not match type 'string'"),
+                "None does not match type 'string'",
+                "Object has incorrect type (expected string)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_string_got_integer", {
             'schema': '{"type": "string"}',
             'data': '5',
             'raises': ValidationError(
-                "5 does not match type 'string'"),
+                "5 does not match type 'string'",
+                "Object has incorrect type (expected string)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_number_got_integer", {
             'schema': '{"type": "number"}',
-            'data': '1'
+            'data': '1',
         }),
         ("type_number_number_float", {
             'schema': '{"type": "number"}',
-            'data': '1.1'
+            'data': '1.1',
         }),
         ("type_number_got_null", {
             'schema': '{"type": "number"}',
             'data': 'null',
             'raises': ValidationError(
-                "None does not match type 'number'"),
+                "None does not match type 'number'",
+                "Object has incorrect type (expected number)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_number_got_string", {
             'schema': '{"type": "number"}',
             'data': '"foobar"',
             'raises': ValidationError(
                 "'foobar' does not match type 'number'"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_number_got_string_that_looks_like_number", {
             'schema': '{"type": "number"}',
             'data': '"3"',
             'raises': ValidationError(
                 "'3' does not match type 'number'"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_integer_got_integer_one", {
             'schema': '{"type": "integer"}',
@@ -803,13 +816,19 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"type": "integer"}',
             'data': '1.1',
             'raises': ValidationError(
-                "1.1000000000000001 does not match type 'integer'")
+                "1.1000000000000001 does not match type 'integer'",
+                "Object has incorrect type (expected integer)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_integer_got_null", {
             'schema': '{"type": "integer"}',
             'data': 'null',
             'raises': ValidationError(
-                "None does not match type 'integer'")
+                "None does not match type 'integer'",
+                "Object has incorrect type (expected integer)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_boolean_got_true", {
             'schema': '{"type": "boolean"}',
@@ -823,25 +842,37 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"type": "boolean"}',
             'data': 'null',
             'raises': ValidationError(
-                "None does not match type 'boolean'"),
+                "None does not match type 'boolean'",
+                "Object has incorrect type (expected boolean)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_boolean_got_empty_string", {
             'schema': '{"type": "boolean"}',
             'data': '""',
             'raises': ValidationError(
-                "'' does not match type 'boolean'"),
+                "'' does not match type 'boolean'",
+                "Object has incorrect type (expected boolean)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_boolean_got_empty_list", {
             'schema': '{"type": "boolean"}',
             'data': '[]',
             'raises': ValidationError(
-                "[] does not match type 'boolean'"),
+                "[] does not match type 'boolean'",
+                "Object has incorrect type (expected boolean)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_boolean_got_empty_object", {
             'schema': '{"type": "boolean"}',
             'data': '{}',
             'raises': ValidationError(
-                "{} does not match type 'boolean'"),
+                "{} does not match type 'boolean'",
+                "Object has incorrect type (expected boolean)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_object_got_object", {
             'schema': '{"type": "object"}',
@@ -851,13 +882,19 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"type": "object"}',
             'data': '1',
             'raises': ValidationError(
-                "1 does not match type 'object'")
+                "1 does not match type 'object'",
+                "Object has incorrect type (expected object)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_object_got_null", {
             'schema': '{"type": "object"}',
             'data': 'null',
             'raises': ValidationError(
-                "None does not match type 'object'")
+                "None does not match type 'object'",
+                "Object has incorrect type (expected object)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_array_got_array", {
             'schema': '{"type": "array"}',
@@ -867,13 +904,19 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"type": "array"}',
             'data': 'null',
             'raises': ValidationError(
-                "None does not match type 'array'")
+                "None does not match type 'array'",
+                "Object has incorrect type (expected array)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_array_got_integer", {
             'schema': '{"type": "array"}',
             'data': '1',
             'raises': ValidationError(
-                "1 does not match type 'array'")
+                "1 does not match type 'array'",
+                "Object has incorrect type (expected array)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_null_got_null", {
             'schema': '{"type": "null"}',
@@ -883,25 +926,37 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"type": "null"}',
             'data': '""',
             'raises': ValidationError(
-                "'' does not match type 'null'")
+                "'' does not match type 'null'",
+                "Object has incorrect type (expected null)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_null_got_zero", {
             'schema': '{"type": "null"}',
             'data': '0',
             'raises': ValidationError(
-                "0 does not match type 'null'")
+                "0 does not match type 'null'",
+                "Object has incorrect type (expected null)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_null_got_empty_list", {
             'schema': '{"type": "null"}',
             'data': '[]',
             'raises': ValidationError(
-                "[] does not match type 'null'")
+                "[] does not match type 'null'",
+                "Object has incorrect type (expected null)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_null_got_empty_object", {
             'schema': '{"type": "null"}',
             'data': '{}',
             'raises': ValidationError(
-                "{} does not match type 'null'")
+                "{} does not match type 'null'",
+                "Object has incorrect type (expected null)"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
         }),
         ("type_any_got_null", {
             'schema': '{"type": "any"}',
@@ -966,7 +1021,10 @@ class ValidatorTests(unittest.TestCase):
             }""",
             'data': '{"foo": "foobar"}',
             'raises': ValidationError(
-                "'foobar' does not match type 'number'")
+                "'foobar' does not match type 'number'",
+                "Object has incorrect type (expected number)"),
+            'object_expr': 'object.foo',
+            'schema_expr': 'schema.properties.foo.type',
         }),
         ("property_check_ignores_missing_optional_properties", {
             'schema': """
@@ -994,7 +1052,10 @@ class ValidatorTests(unittest.TestCase):
             }""",
             'data': '{"foo": null}',
             'raises': ValidationError(
-                "None does not match type 'number'")
+                "None does not match type 'number'",
+                "Object has incorrect type (expected number)"),
+            'object_expr': 'object.foo',
+            'schema_expr': 'schema.properties.foo.type',
         }),
         ("property_check_reports_missing_non_optional_properties", {
             'schema': """
@@ -1009,7 +1070,10 @@ class ValidatorTests(unittest.TestCase):
             }""",
             'data': '{}',
             'raises': ValidationError(
-                "{} does not have property 'foo'")
+                "{} does not have property 'foo'",
+                "Object lacks property 'foo'"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.properties.foo.optional',
         }),
         ("property_check_reports_unknown_properties_when_additionalProperties_is_false", {
             'schema': """
@@ -1020,7 +1084,11 @@ class ValidatorTests(unittest.TestCase):
             'data': '{"foo": 5}',
             'raises': ValidationError(
                 "{'foo': 5} has unknown property 'foo' and"
-                " additionalProperties is false")
+                " additionalProperties is false",
+                "Object has unknown property 'foo' but additional "
+                "properties are disallowed"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.additionalProperties',
         }),
         ("property_check_ignores_normal_properties_when_additionalProperties_is_false", {
             'schema': """
@@ -1053,7 +1121,10 @@ class ValidatorTests(unittest.TestCase):
             }""",
             'data': '{"foo": "aaa", "bar": 5}',
             'raises': ValidationError(
-                "5 does not match type 'string'")
+                "5 does not match type 'string'",
+                "Object has incorrect type (expected string)"),
+            'object_expr': 'object.bar',
+            'schema_expr': 'schema.additionalProperties.type',
         }),
         ("enum_check_does_nothing_by_default", {
             'schema': '{}',
@@ -1067,7 +1138,10 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"enum": [1, 2, 3]}',
             'data': '5',
             'raises': ValidationError(
-                '5 does not match any value in enumeration [1, 2, 3]')
+                '5 does not match any value in enumeration [1, 2, 3]',
+                "Object does not match any value in enumeration"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.enum',
         }),
         ("items_check_does_nothing_for_non_arrays", {
             'schema': '{"items": {"type": "string"}}',
@@ -1081,7 +1155,10 @@ class ValidatorTests(unittest.TestCase):
             'schema': '{"items": {"type": "string"}}',
             'data': '["foo", null, "froz"]',
             'raises': ValidationError(
-                "None does not match type 'string'")
+                "None does not match type 'string'",
+                "Object has incorrect type (expected string)"),
+            'object_expr': 'object[1]',
+            'schema_expr': 'schema.items.type',
         }),
         ("items_with_array_schema_applies_to_corresponding_items", {
             'schema': """
@@ -1104,7 +1181,10 @@ class ValidatorTests(unittest.TestCase):
             'data': '["foo"]',
             'raises': ValidationError(
                 "['foo'] is shorter than array schema [{'type':"
-                " 'string'}, {'type': 'boolean'}]")
+                " 'string'}, {'type': 'boolean'}]",
+                "Object array is shorter than schema array"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.items',
         }),
         ("items_with_array_schema_and_additionalProperties_of_false_checks_for_too_much_data", {
             'schema': """
@@ -1119,7 +1199,10 @@ class ValidatorTests(unittest.TestCase):
             'raises': ValidationError(
                 "['foo', False, 5] is not of the same length as array"
                 " schema [{'type': 'string'}, {'type': 'boolean'}] and"
-                " additionalProperties is false")
+                " additionalProperties is false",
+                "Object array is not of the same length as schema array"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.items',
         }),
         ("items_with_array_schema_and_additionalProperties", {
             'schema': """
@@ -1147,7 +1230,10 @@ class ValidatorTests(unittest.TestCase):
             }""",
             'data': '["foo", false, 5, 7.9, null]',
             'raises': ValidationError(
-                "None does not match type 'number'")
+                "None does not match type 'number'",
+                "Object has incorrect type (expected number)"),
+            'object_expr': 'object[4]',
+            'schema_expr': 'schema.additionalProperties.type',
         }),
         ("requires_with_simple_property_name_does_nothing_when_parent_property_is_not_used", {
             'schema': """
@@ -1182,7 +1268,10 @@ class ValidatorTests(unittest.TestCase):
             'data': '{"bar": null}',
             'raises': ValidationError(
                 "None requires presence of property 'foo' in the same"
-                " object")
+                " object",
+                "Enclosing object does not have property 'foo'"),
+            'object_expr': 'object.bar',
+            'schema_expr': 'schema.properties.bar.requires',
         }),
         ("requires_with_simple_property_name_can_report_problems_while_nested", {
             'schema': """
@@ -1206,7 +1295,10 @@ class ValidatorTests(unittest.TestCase):
             'data': '{"nested": {"bar": null}}',
             'raises': ValidationError(
                 "None requires presence of property 'foo' in the same"
-                " object")
+                " object",
+                "Enclosing object does not have property 'foo'"),
+            'object_expr': 'object.nested.bar',
+            'schema_expr': 'schema.properties.nested.properties.bar.requires',
         }),
         ("requires_with_simple_property_name_works_when_condition_satisfied", {
             'schema': """
@@ -1268,7 +1360,10 @@ class ValidatorTests(unittest.TestCase):
             """,
             'data': '{"bar": null}',
             'raises': ValidationError(
-                "{'bar': None} does not have property 'foo'")
+                "{'bar': None} does not have property 'foo'",
+                "Object lacks property 'foo'"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.properties.bar.requires.properties.foo.optional',
         }),
         ("requires_with_schema_can_report_subtle_problems", {
             # In this test presence of "bar" requires that "foo" is
@@ -1294,9 +1389,24 @@ class ValidatorTests(unittest.TestCase):
             """,
             'data': '{"bar": null, "foo": "not a number"}',
             'raises': ValidationError(
-                "'not a number' does not match type 'number'")
+                "'not a number' does not match type 'number'",
+                "Object has incorrect type (expected number)"),
+            'object_expr': 'object.foo',
+            'schema_expr': 'schema.properties.bar.requires.properties.foo.type'
         }),
-
+        ("format_date_time_works", {
+            'schema': '{"format": "date-time"}',
+            'data': '"2010-11-12T14:38:55Z"',
+        }),
+        ("format_date_time_finds_problems", {
+            'schema': '{"format": "date-time"}',
+            'data': '"broken"',
+            'raises': ValidationError(
+                "'broken' is not a string representing JSON date-time",
+                "Object is not a string representing JSON date-time"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.format'
+        }),
     ]
 
     def test_validate(self):
@@ -1306,10 +1416,23 @@ class ValidatorTests(unittest.TestCase):
             try:
                 validate(self.schema, self.data)
             except type(self.raises) as ex:
-                self.assertEqual(str(ex), str(self.raises))
+                self.assertEqual(ex.message, self.raises.message)
+                if self.raises.new_message is not None:
+                    self.assertEqual(ex.new_message, self.raises.new_message)
+                self.assertEqual(ex.object_expr, self.object_expr)
+                self.assertEqual(ex.schema_expr, self.schema_expr)
             except Exception as ex:
                 self.fail("Raised exception {0!r} instead of {1!r}".format(
                     ex, self.raises))
         else:
             self.assertEqual(
                 True, validate(self.schema, self.data))
+
+    def __str__(self):
+        """
+        Override TestCase to report the scenario name.
+
+        TODO: Replace this with TestCaseWithScenarios in subsequent pipe
+        """
+        return self.id()
+
