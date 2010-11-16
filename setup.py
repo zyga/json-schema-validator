@@ -20,24 +20,26 @@
 
 from setuptools import setup, find_packages
 
+from linaro_json import get_version
+
 
 setup(
-        name = 'linaro-json',
-        version = "0.0.2",
-        author = "Zygmunt Krynicki",
-        author_email = "zygmunt.krynicki@linaro.org",
-        packages = ['linaro_json', 'linaro_json.proxies',
-                    'linaro_json.tests'],
-        long_description = """
-        Collection of JSON utilities developed by the Linaro infrastructure team
-        """,
-        url='https://launchpad.net/linaro-python-json',
-        test_suite='linaro_json.tests.test_suite',
-        classifiers=[
-            "Development Status :: 3 - Alpha",
-            "Intended Audience :: Developers",
-            "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
-            "Operating System :: OS Independent",
-            "Programming Language :: Python :: 2.6",
-            ],
-        )
+    name = 'linaro_json',
+    version = get_version(),
+    author = "Zygmunt Krynicki",
+    author_email = "zygmunt.krynicki@linaro.org",
+    description = "JSON manipulation utilities developed by the Linaro infrastructure team",
+    packages = ['linaro_json',
+                'linaro_json.proxies',
+                'linaro_json.tests'],
+    url='https://launchpad.net/linaro-python-json',
+    test_suite='linaro_json.tests.test_suite',
+    classifiers=[
+        "Development Status :: 3 - Alpha",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 2.6",
+    ],
+    zip_safe = True,
+)

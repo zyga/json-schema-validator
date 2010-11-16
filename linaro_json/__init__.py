@@ -313,16 +313,38 @@ datetime_proxy class defined in the linaro_json.proxies.datetime
 module.
 """
 
-# Required since we have json module that is also defined in the
-# standard library.
-
 from linaro_json.impl import json
 from linaro_json.decoder import PluggableJSONDecoder
 from linaro_json.encoder import PluggableJSONEncoder
 from linaro_json.interface import (
-    IFundamentalJSONType, ISimpleJSONType, IComplexJSONType)
+    IComplexJSONType,
+    IFundamentalJSONType,
+    ISimpleJSONType,
+)
 from linaro_json.proxy_registry import (
-    ClassRegistry, DefaultClassRegistry)
+    ClassRegistry,
+    DefaultClassRegistry,
+)
 from linaro_json.pod import PlainOldData
 from linaro_json.schema import (
-    Schema, Validator, SchemaError, ValidationError)
+    Schema,
+    SchemaError,
+    ValidationError,
+    Validator,
+)
+
+
+__version__ = (1, 0, 0, "alpha", 0)
+
+
+def get_version():
+    """
+    Return a string representing the version of linaro_json package
+    """
+    major, minor, micro, releaselevel, serial = __version__
+    assert releaselevel in ('alpha', 'beta', 'candidate', 'final')
+    base_version = "%s.%s.%s" % (major, minor, micro)
+    if releaselevel != 'final':
+        base_version += "-%s" % releaselevel
+    return base_version
+
