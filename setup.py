@@ -35,7 +35,7 @@ setup(
     url='https://launchpad.net/linaro-python-json',
     test_suite='linaro_json.tests.test_suite',
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
         "Operating System :: OS Independent",
