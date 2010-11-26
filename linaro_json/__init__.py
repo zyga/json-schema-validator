@@ -334,7 +334,7 @@ from linaro_json.schema import (
 )
 
 
-__version__ = (1, 0, 0, "final", 0)
+__version__ = (1, 1, 0, "dev", 0)
 
 
 def get_version():
@@ -342,7 +342,7 @@ def get_version():
     Return a string representing the version of linaro_json package
     """
     major, minor, micro, releaselevel, serial = __version__
-    assert releaselevel in ('alpha', 'beta', 'candidate', 'final')
+    assert releaselevel in ('dev', 'alpha', 'beta', 'candidate', 'final')
     base_version = "%s.%s.%s" % (major, minor, micro)
     if releaselevel != 'final':
         base_version += "-%s" % releaselevel
