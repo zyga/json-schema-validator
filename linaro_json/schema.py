@@ -419,6 +419,13 @@ class Schema(object):
     def extends(self):
         raise NotImplementedError("extends property is not supported")
 
+    @property
+    def default(self):
+        try:
+            return self._schema["default"]
+        except KeyError:
+            raise SchemaError("There is no schema default for this item")
+
 
 class Validator(object):
     """
