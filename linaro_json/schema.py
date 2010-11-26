@@ -20,7 +20,7 @@
 JSON schema validator for python
 Note: only a subset of schema features are currently supported.
 
-See: json-schema.org for details
+See: http://json-schema.org/ for details
 """
 import datetime
 import decimal
