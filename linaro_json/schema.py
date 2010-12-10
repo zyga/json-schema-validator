@@ -20,7 +20,7 @@
 JSON schema validator for python
 Note: only a subset of schema features are currently supported.
 
-See: json-schema.org for details
+See: http://json-schema.org/ for details
 """
 import datetime
 import decimal
@@ -418,6 +418,13 @@ class Schema(object):
     @property
     def extends(self):
         raise NotImplementedError("extends property is not supported")
+
+    @property
+    def default(self):
+        try:
+            return self._schema["default"]
+        except KeyError:
+            raise SchemaError("There is no schema default for this item")
 
 
 class Validator(object):

@@ -743,6 +743,17 @@ class SchemaTests(TestWithScenarios, TestCase):
             'raises': NotImplementedError(
                 "extends property is not supported"),
         }),
+        ('default_with_value', {
+            'schema': '{"default": 5}',
+            'expected': {
+                'default': 5
+            }
+        }),
+        ('default_without_value', {
+            'schema': '{}',
+            'access': 'default',
+            'raises': SchemaError("There is no schema default for this item"),
+        }),
     ]
 
     def test_schema_attribute(self):
