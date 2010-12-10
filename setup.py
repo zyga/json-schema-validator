@@ -42,7 +42,7 @@ setup(
         "Programming Language :: Python :: 2.6",
     ],
     install_requires = [
-        'simplejson >= 2.1',
+        'simplejson >= 2.0.9',
     ],
     zip_safe = True,
 )
