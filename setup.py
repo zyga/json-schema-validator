@@ -41,5 +41,8 @@ setup(
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 2.6",
     ],
+    install_requires = [
+        'simplejson >= 2.1',
+    ],
     zip_safe = True,
 )
