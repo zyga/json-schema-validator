@@ -1,5 +1,8 @@
 """
-Document builder API
+JSON document API.
+
+Allows to construct set of python classes that act as a schema and save
+them to pure JSON structures
 """
 
 from linaro_json.interface import IDocumentProperty
@@ -7,6 +10,9 @@ from linaro_json.type_impl import TYPE_MAP
 
 
 class DocumentMetaData(object):
+    """
+    Helper class for storing meta-data about a document schema.
+    """
 
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
@@ -41,8 +47,11 @@ class DocumentObject(object):
     """
     JSON Document Object.
 
-    Corresponds to JSON object { }.
-    May have any number of JSON Document Properties.
+    Corresponds to JSON object { }. May have any number of JSON Document
+    Properties.
+
+    The live python value of each property is stored. The entire
+    document can be converted to JSON with the to_json() method.
     """
     __metaclass__ = DocumentMeta
 
@@ -71,7 +80,11 @@ class DocumentObject(object):
 
     def to_json(self):
         """
-        Convert this object to JSON
+        Convert this object to JSON.
+
+        The returned value has no connection to the document. It can be
+        safely pickled, manipulated etc. The original document can be
+        discarded if no longer necessary.
         """
         return dict([
             (prop.name, prop.to_json(self._fields[prop.name]))
@@ -81,6 +94,23 @@ class DocumentObject(object):
 
 
 class DocumentProperty(IDocumentProperty):
+    """
+    JSON document property.
+
+    Corresponds to properties on JSON object. Document properties may
+    carry a number of attributes that are defined by the JSON schema.
+    Currently most of those are unused and just stored. In the future
+    they can be used to generate a full schema of the document based
+    purely on the python class model.
+
+    Internally the most important attribute is the type attribute. It
+    is used to select type implementation that in turn defines how the
+    property behaves.
+
+    Internally this class knows about the implementation detail of
+    DocumentObject to store/retrieve the actual property value from the
+    parent document.
+    """
 
     _valid_attrs = frozenset([
         "additionalProperties",
@@ -135,17 +165,46 @@ class DocumentProperty(IDocumentProperty):
 
 
 class DocumentTemplate(object):
+    """
+    Document templates are a simple way to construct new objects and
+    being able to define custom defaults.
+
+    A template may have any number of properties or class variables that
+    have a value. Any value not specified in the DocumentObject
+    constructor that also exists in the DocumentTemplate will be used to
+    initialize appropriate DocumentProperties.
+
+    The logic for doing this is inside the DocumentObject constructuror.
+    It calls the internal implementation method of this class to obtain
+    the default value.
+    """
 
     def _get_initial_value_for_property(self, prop):
         return getattr(self, prop.name, prop._get_initial_value())
 
 
 class DocumentBuilder(object):
+    """
+    Document builder is a joining point for DocumentObject and
+    DocumentTemplate. The builder instance is callable and will use any
+    available templates to instantiate the DocumentObjects.
+
+    It's a simple way to build objects using a common schema and using
+    arbitrary default values at the same time.
+    """
 
     def __init__(self, *templates):
         self.templates = templates
 
     def __call__(self, schema_cls, **kwargs):
+        """
+        Construct an instance of schema_cls (DocumentObject) using any
+        known templates registered in DocumentBuilder.__init__().
+
+        All additional arguments are passed to the constructor and take
+        precedence over defaults (including defaults from the template
+        and defaults from the type itself)
+        """
         for template_cls in self.templates:
             if template_cls.__schema__ is schema_cls:
                 kwargs["_template"] = template_cls()
