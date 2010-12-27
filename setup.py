@@ -44,5 +44,9 @@ setup(
     install_requires = [
         'simplejson >= 2.0.9',
     ],
+    tests_require = [
+        'testtools >= 0.9.2',
+        'testscenarios >= 0.2',
+    ],
     zip_safe = True,
 )
