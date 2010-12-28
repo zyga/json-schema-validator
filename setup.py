@@ -43,6 +43,7 @@ setup(
     ],
     install_requires = [
         'simplejson >= 2.0.9',
+        'versiontools >= 1.0',
     ],
     tests_require = [
         'testtools >= 0.9.2',
