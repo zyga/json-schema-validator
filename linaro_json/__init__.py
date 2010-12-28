@@ -336,7 +336,7 @@ from linaro_json.schema import (
 from versiontools import Version
 
 
-__version__ = Version(1, 2, 0, "final", 0)
+__version__ = Version(1, 2, 0, "dev")
 
 
 def get_version():
