@@ -7,6 +7,7 @@ Version 1.2
 * Change name to linaro-json
 * Add dependency on versiontools
 * Register on pypi
+* Add ReST documentation
 
 
 Version 1.1
