@@ -2,19 +2,19 @@
 #
 # Author: Zygmunt Krynicki <zygmunt.krynicki@linaro.org>
 #
-# This file is part of linaro-python-json.
+# This file is part of linaro-json.
 #
-# linaro-python-json is free software: you can redistribute it and/or modify
+# linaro-json is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License version 3
 # as published by the Free Software Foundation
 #
-# linaro-python-json is distributed in the hope that it will be useful,
+# linaro-json is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with linaro-python-json.  If not, see <http://www.gnu.org/licenses/>.
+# along with linaro-json.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 JSON schema validator for python
