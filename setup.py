@@ -24,7 +24,7 @@ from linaro_json import get_version
 
 
 setup(
-    name = 'linaro-python-json',
+    name = 'linaro-json',
     version = get_version(),
     author = "Zygmunt Krynicki",
     author_email = "zygmunt.krynicki@linaro.org",
