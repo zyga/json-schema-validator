@@ -1,2 +1,2 @@
 include doc/conf.py
-recursive-include doc/*.py
+recursive-include doc *.rst
