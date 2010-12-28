@@ -1,5 +1,6 @@
 1.2:
  * Change name to linaro-json
+ * Add dependency on versiontools
 
 1.1:
  * Add support for retrieving default values from the schema
