@@ -42,7 +42,7 @@ class ClassRegistry(object):
     def register(self, other_cls):
         """
         Function/class decorator for marking a class as serializable.
-        Register class `other_cls' in the type registry.
+        Register class `other_cls` in the type registry.
         """
         if not issubclass(other_cls, IComplexJSONType):
             raise TypeError("cls must be a class implementing"

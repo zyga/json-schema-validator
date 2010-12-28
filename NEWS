@@ -1,10 +1,1 @@
-1.2:
- * Change name to linaro-json
- * Add dependency on versiontools
- * Register on pypi
-
-1.1:
- * Add support for retrieving default values from the schema
-
-1.0:
- * Initial release
+See doc/changes.rst

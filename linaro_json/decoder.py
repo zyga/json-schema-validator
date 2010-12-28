@@ -31,6 +31,7 @@ from linaro_json.interface import (
 from linaro_json.proxy_registry import DefaultClassRegistry
 
 
+
 class NullHandler(logging.Handler):
     def emit(self, record):
         pass
@@ -181,3 +182,5 @@ class PluggableJSONDecoder(json.JSONDecoder):
             return self._unmarshall_dict(json_doc, type_expr)
         else:
             return self._unmarshall_object(json_doc, type_expr)
+
+__all__ = ["PluggableJSONDecoder"]

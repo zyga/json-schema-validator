@@ -98,3 +98,5 @@ class PluggableJSONEncoder(json.JSONEncoder):
             return obj.to_json()
         else:
             return super(PluggableJSONEncoder, self).default(obj)
+
+__all__ = ["PluggableJSONEncoder"]

@@ -18,10 +18,16 @@
 
 """
 JSON schema validator for python
-Note: only a subset of schema features are currently supported.
 
-See: http://json-schema.org/ for details
+.. note::
+    Only a subset of schema features are currently supported.
+    Unsupported features are detected and raise a NotImplementedError
+    when you call :func:`Validator.validate`
+
+.. seealso::
+    http://json-schema.org/ for details about the schema
 """
+
 import datetime
 import decimal
 import itertools
@@ -44,15 +50,21 @@ class ValidationError(ValueError):
     A bug in the validated object prevents the program from working.
 
     The error instance has several interesting properties:
-        :message: old and verbose message that contains less helpful
-        message and lots of JSON data (deprecated).
-        :new_message: short and concise message about the problem
-        :object_expr: a JavaScript expression that evaluates to the
-        object that failed to validate. The expression always starts
-        with a root object called 'object'.
-        :schema_expr: a JavaScript expression that evaluats to the
-        schema that was checked at the time validation failed. The
-        expression always starts with a root object called 'schema'.
+
+        :message:
+            Old and verbose message that contains less helpful message
+            and lots of JSON data (deprecated).
+        :new_message:
+            short and concise message about the problem
+        :object_expr:
+            A JavaScript expression that evaluates to the object that
+            failed to validate. The expression always starts with a root
+            object called ``'object'``.
+        :schema_expr:
+            A JavaScript expression that evaluates to the schema that was
+            checked at the time validation failed. The expression always
+            starts with a root object called ``'schema'``.
+
     """
 
     def __init__(self, message, new_message=None,
@@ -79,7 +91,9 @@ class Schema(object):
         """
         Initialize schema with JSON object
 
-        Note: JSON objects are just plain python dictionaries
+        .. note::
+            JSON objects are just plain python dictionaries
+
         """
         if not isinstance(json_obj, dict):
             raise SchemaError("Schema definition must be a JSON object")
@@ -98,13 +112,13 @@ class Schema(object):
         another schema object.
 
         List of built-in simple types:
-            * 'string'
-            * 'number'
-            * 'integer'
-            * 'boolean'
-            * 'object'
-            * 'array'
-            * 'any' (default)
+        * 'string'
+        * 'number'
+        * 'integer'
+        * 'boolean'
+        * 'object'
+        * 'array'
+        * 'any' (default)
         """
         value = self._schema.get("type", "any")
         if not isinstance(value, (basestring, dict, list)):
@@ -137,6 +151,13 @@ class Schema(object):
 
     @property
     def properties(self):
+        """
+        The properties property contains schema for each property in a
+        dictionary.
+
+        The dictionary name is the property name. The dictionary value
+        is the schema object itself.
+        """
         value = self._schema.get("properties", {})
         if not isinstance(value, dict):
             raise SchemaError(
@@ -430,6 +451,8 @@ class Schema(object):
 class Validator(object):
     """
     JSON Schema validator.
+
+    Can be used to validate any JSON document against a :class:`Schema`.
     """
     JSON_TYPE_MAP = {
         "string": basestring,
@@ -470,9 +493,13 @@ class Validator(object):
         Validate specified JSON object obj with specified Schema
         instance schema.
 
-        Returns True on success.
-        Raises ValidationError if the object does not match schema.
-        Raises SchemaError if the schema itself is wrong.
+        :param schema: Schema to validate against
+        :type schema: :class:`Schema`
+        :param obj: JSON Document to validate
+        :rtype: bool
+        :returns: True on success
+        :raises ValidationError: if the object does not match schema.
+        :raises SchemaError: if the schema itself is wrong.
         """
         if not isinstance(schema, Schema):
             raise ValueError(
@@ -801,7 +828,7 @@ def validate(schema_text, data_text):
     """
     Validate specified JSON text (data_text) with specified schema
     (schema text). Both are converted to JSON objects with
-    simplesjon.loads.
+    :func:`simplesjon.loads`.
     """
     import simplejson as json
     schema = Schema(json.loads(schema_text))

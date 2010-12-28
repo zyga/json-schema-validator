@@ -17,10 +17,16 @@
 # along with linaro-json.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module with three JSON type mapping interface classes:
-    - IFundamentalJSONType
-    - ISimpleJSONType
-    - ComplexJSONType
+This module defines :class:`IFundamentalJSONType`,
+:class:`ISimpleJSONType` and :class:`IComplexJSONType`.
+
+All those interfaces can be used with the custom encoder and decoder
+classes (:class:`PluggableJSONEncoder` and :class:`PluggableJSONDecoder`
+respectively) to store arbitrary objects. Some operations require global
+type awareness and type registration. This is performed by
+:class:`ClassRegistry` class. A default instance called
+:data:`DefaultClassRegistry` is provided when no special constraints are
+required.
 """
 
 
@@ -112,14 +118,18 @@ class IComplexJSONType(ISimpleJSONType):
 
         Hint is a dictionary of attributes mapping to type expressions.
         The following type expressions are defined:
-            TYPE: decode this attribute using TYPE which must be a
-            IComplexJSONType or ISimpleJSONType or must have a proxy
-            that maps it to one of those.
-            [expr]: decode this attribute as a list of objects where
-            each object is of type `expr'
-            {ATTR: expr}: decode this attribute as a dictionary where
-            specified ATTR should be decoded with expr. You can add
-            as many attributes as you like.
+
+            TYPE::
+                Decode this attribute using TYPE which must be a
+                :class:`IComplexJSONType` or :class:`ISimpleJSONType` or
+                must have a proxy that maps it to one of those.
+            [expr]::
+                Decode this attribute as a list of objects where
+                each object is of type ``expr``
+            {ATTR: expr}::
+                Decode this attribute as a dictionary where specified
+                ATTR should be decoded with expr. You can add as many
+                attributes as you like.
 
         Missing attributes are not converted in any special way and
         retain their original (string / number / list / dict) type.
@@ -152,7 +162,6 @@ class IDocumentProperty(object):
 
     The key ability is to be able to convert the data to the JSON
     equivalent if needed. This is performed by to_json()
-
 
     The actual data descriptor is implemented once, in a canonical way
     in builder.Property. It has to be synchronized with the
