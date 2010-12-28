@@ -24,7 +24,7 @@ from linaro_json import get_version
 
 
 setup(
-    name = 'linaro-python-json',
+    name = 'linaro-json',
     version = get_version(),
     author = "Zygmunt Krynicki",
     author_email = "zygmunt.krynicki@linaro.org",
@@ -43,6 +43,7 @@ setup(
     ],
     install_requires = [
         'simplejson >= 2.0.9',
+        'versiontools >= 1.0',
     ],
     tests_require = [
         'testtools >= 0.9.2',
