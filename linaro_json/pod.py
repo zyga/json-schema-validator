@@ -48,36 +48,39 @@ class PlainOldData(IComplexJSONType):
         """
         Return a list of sorted attributes.
 
-        This works with all public attributes:
-        >>> class Person(PlainOldData):
-        ...     def __init__(self, name):
-        ...         self.name = name
-        >>> joe = Person('Joe')
-        >>> joe.pod_attrs
-        ('name',)
+        This works with all public attributes::
 
-        With private attributes exposed as properties:
-        >>> class Person(PlainOldData):
-        ...     def __init__(self, name):
-        ...         self._name = name
-        ...     @property
-        ...     def name(self):
-        ...         return self._name
-        >>> joe = Person('Joe')
-        >>> joe.pod_attrs
-        ('name',)
+            >>> class Person(PlainOldData):
+            ...     def __init__(self, name):
+            ...         self.name = name
+            >>> joe = Person('Joe')
+            >>> joe.pod_attrs
+            ('name',)
 
-        And with __slots__:
-        >>> class Person(PlainOldData):
-        ...     __slots__ = ('_name',)
-        ...     def __init__(self, name):
-        ...         self._name = name
-        ...     @property
-        ...     def name(self):
-        ...         return self._name
-        >>> joe = Person('Joe')
-        >>> joe.pod_attrs
-        ('name',)
+        With private attributes exposed as properties::
+
+            >>> class Person(PlainOldData):
+            ...     def __init__(self, name):
+            ...         self._name = name
+            ...     @property
+            ...     def name(self):
+            ...         return self._name
+            >>> joe = Person('Joe')
+            >>> joe.pod_attrs
+            ('name',)
+
+        And with __slots__::
+
+            >>> class Person(PlainOldData):
+            ...     __slots__ = ('_name',)
+            ...     def __init__(self, name):
+            ...         self._name = name
+            ...     @property
+            ...     def name(self):
+            ...         return self._name
+            >>> joe = Person('Joe')
+            >>> joe.pod_attrs
+            ('name',)
 
         """
         if hasattr(self, '__pod_attrs__') and self.__pod_attrs__ is not None:
@@ -150,15 +153,16 @@ class PlainOldData(IComplexJSONType):
         """
         Produce more-less human readable encoding of all fields.
 
-        This function simply shows all fields in a simple format:
-        >>> class Person(PlainOldData):
-        ...     def __init__(self, name):
-        ...         self._name = name
-        ...     @property
-        ...     def name(self):
-        ...         return self._name
-        >>> Person("Bob")
-        <Person name:'Bob'>
+        This function simply shows all fields in a simple format::
+
+            >>> class Person(PlainOldData):
+            ...     def __init__(self, name):
+            ...         self._name = name
+            ...     @property
+            ...     def name(self):
+            ...         return self._name
+            >>> Person("Bob")
+            <Person name:'Bob'>
 
         Note that implementation details such as slots and properties
         are hidden.  The produced string uses the public API to access
