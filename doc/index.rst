@@ -9,6 +9,7 @@ Linaro JSON
     reference.rst
     tutorial.rst
     changes.rst
+    hacking.rst
 
 
 Indices and tables
