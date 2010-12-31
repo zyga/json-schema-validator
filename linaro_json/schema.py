@@ -275,13 +275,14 @@ class Schema(object):
     @property
     def pattern(self):
         """
-        Note: JSON schema specifications says that this value SHOULD
-        follow the EMCA 262/Perl 5 format. We cannot support this so we
-        support python regular expressions instead. This is still valid
-        but should be noted for clarity.
+        .. note::
+            JSON schema specifications says that this value SHOULD
+            follow the ``EMCA 262/Perl 5`` format. We cannot support
+            this so we support python regular expressions instead. This
+            is still valid but should be noted for clarity.
 
-        The return value is either None or a compiled regular expression
-        object
+
+        :returns None or compiled regular expression
         """
         value = self._schema.get("pattern", None)
         if value is None:
@@ -316,6 +317,12 @@ class Schema(object):
 
     @property
     def enum(self):
+        """
+        Enumeration of possible correct values.
+
+        *Must* be either ``None`` or a non-empty list of valid objects.
+        The list *must not* contain duplicate elements.
+        """
         value = self._schema.get("enum", None)
         if value is None:
             return
