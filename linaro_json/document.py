@@ -9,7 +9,7 @@ from linaro_json.interface import IDocumentProperty
 from linaro_json.type_impl import TYPE_MAP
 
 
-class DocumentMetaData(object):
+class _DocumentMetaData(object):
     """
     Helper class for storing meta-data about a document schema.
     """
@@ -18,7 +18,7 @@ class DocumentMetaData(object):
         self.__dict__.update(kwargs)
 
 
-class DocumentMeta(type):
+class _DocumentMeta(type):
     """
     Meta class for JSON Document objects.
 
@@ -36,7 +36,7 @@ class DocumentMeta(type):
                     prop.name = prop_name
                 props.append(prop)
         props.sort(key=lambda prop: prop._sequence_number)
-        dct['_meta'] = DocumentMetaData(
+        dct['_meta'] = _DocumentMetaData(
             props=props,
             prop_name_set=frozenset([prop.name for prop in props])
         )
@@ -53,7 +53,7 @@ class DocumentObject(object):
     The live python value of each property is stored. The entire
     document can be converted to JSON with the to_json() method.
     """
-    __metaclass__ = DocumentMeta
+    __metaclass__ = _DocumentMeta
 
     def __init__(self, **kwargs):
         self._fields = {}
