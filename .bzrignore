@@ -5,3 +5,6 @@ dashboard_server/media/attachments/
 dashboard_server/media/bundles/
 *.egg-info
 *.diff
+build
+dist
+*.egg
