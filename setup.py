@@ -20,12 +20,12 @@
 
 from setuptools import setup, find_packages
 
-from linaro_json import get_version
+from linaro_json import __version__
 
 
 setup(
     name = 'linaro-json',
-    version = get_version(),
+    version = str(__version__),
     author = "Zygmunt Krynicki",
     author_email = "zygmunt.krynicki@linaro.org",
     description = "JSON manipulation utilities developed by the Linaro infrastructure team",
