@@ -45,6 +45,9 @@ setup(
         'simplejson >= 2.0.9',
         'versiontools >= 1.0.1',
     ],
+    setup_requires = [
+        'versiontools >= 1.0.1',
+    ],
     tests_require = [
         'testtools >= 0.9.2',
         'testscenarios >= 0.2',

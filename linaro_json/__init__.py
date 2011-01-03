@@ -43,7 +43,12 @@ from linaro_json.schema import (
 )
 
 
-__version__ = Version(1, 2, 0, "final")
+__version__ = "1.2.0.final"
+try:
+    import versiontools
+    __version__ = versiontools.Version(*__version__.split("."))
+except ImportError:
+    pass
 
 
 def get_version():
