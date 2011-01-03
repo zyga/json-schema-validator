@@ -135,11 +135,18 @@ class DocumentProperty(IDocumentProperty):
             format=kwargs.get("format"))
         self.name = None # Name needs a default value for DocumentMeta
         self.__dict__.update(kwargs)
-        self.__doc__ = kwargs.get('description')
-        self.__doc__ += "\n\nJSON attributes:\n"
+        self.__doc__ += "\n\n\tJSON schema attributes:\n\n"
         for attr in self._valid_attrs:
-            if attr in kwargs:
-                self.__doc__ += "\t%s: %s\n" % (attr, kwargs[attr])
+            if attr not in kwargs:
+                continue
+            self.__doc__ += "\t\t%s:\n" % (attr,)
+            if attr == 'enum':
+                self.__doc__ += "\t\t\tPossible values:\n\n"
+                for enumval in kwargs[attr]:
+                    self.__doc__ += "\t\t\t* ``%r``\n" % (enumval,)
+            else:
+                self.__doc__ += "\t\t\t%s\n" % (kwargs[attr],)
+        self.__doc__ = self.__doc__.replace("\t", " " * 4)
 
     def to_json(self, python_value):
         """
