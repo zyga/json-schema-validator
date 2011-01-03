@@ -43,14 +43,14 @@ setup(
     ],
     install_requires = [
         'simplejson >= 2.0.9',
-        'versiontools >= 1.0.1',
+        'versiontools >= 1.0.2',
     ],
     setup_requires = [
-        'versiontools >= 1.0.1',
+        'versiontools >= 1.0.2',
     ],
     tests_require = [
-        'testtools >= 0.9.2',
         'testscenarios >= 0.2',
+        'testtools >= 0.9.2',
     ],
     zip_safe = True,
 )
