@@ -41,7 +41,7 @@ from linaro_json.schema import (
 )
 
 
-__version__ = "1.2.3.dev"
+__version__ = "1.2.3.final"
 try:
     import versiontools
     __version__ = versiontools.Version(*__version__.split("."))
