@@ -20,8 +20,6 @@
 Universal JSON utilities developed by Linaro
 """
 
-from versiontools import Version
-
 from linaro_json.impl import json
 from linaro_json.decoder import PluggableJSONDecoder
 from linaro_json.encoder import PluggableJSONEncoder
@@ -43,7 +41,7 @@ from linaro_json.schema import (
 )
 
 
-__version__ = "1.2.1.final"
+__version__ = "1.2.2.final"
 try:
     import versiontools
     __version__ = versiontools.Version(*__version__.split("."))

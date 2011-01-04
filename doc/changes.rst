@@ -1,6 +1,11 @@
 Version History
 ***************
 
+Version 1.2.2
+=============
+
+* Fix another problem with pip and versiontools (removed unconditional import
+  of versiontools from __init__.py)
 
 Version 1.2.1
 =============
