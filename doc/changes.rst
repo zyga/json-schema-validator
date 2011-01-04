@@ -1,6 +1,13 @@
 Version History
 ***************
 
+Version 1.2.3
+=============
+
+* Change how setup.py finds the version of the code to make it pip install okay
+  when simplejson is not installed yet. 
+
+
 Version 1.2.2
 =============
 
