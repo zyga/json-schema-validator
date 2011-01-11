@@ -148,31 +148,3 @@ class IComplexJSONType(ISimpleJSONType):
         Recreate the object based on a python dictionary.
         """
         raise NotImplementedError(cls.from_json)
-
-
-class IDocumentProperty(object):
-    """
-    JSON builder property interface.
-
-    The property is a data descriptor providing access to the actual
-    python data stored in the built document. The data is stored in
-    actual instances of builder.Object (as dictionary members) and
-    builder.Array (as list items). The property has no actual storage
-    for that.
-
-    The key ability is to be able to convert the data to the JSON
-    equivalent if needed. This is performed by to_json()
-
-    The actual data descriptor is implemented once, in a canonical way
-    in builder.Property. It has to be synchronized with the
-    implementation of builder.Object.
-    """
-
-    def to_json(self):
-        raise NotImplementedError
-
-    def __get__(self, obj, objtype=None):
-        raise NotImplementedError
-
-    def __set__(self, obj, python_value):
-        raise NotImplementedError
