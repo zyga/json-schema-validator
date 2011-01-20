@@ -49,7 +49,7 @@ setup(
         "Programming Language :: Python :: 2.6",
     ],
     install_requires = [
-        'simplejson >= 2.0.9',
+        'simplejson >= 2.1.3',
         'versiontools >= 1.0.2',
     ],
     setup_requires = [
