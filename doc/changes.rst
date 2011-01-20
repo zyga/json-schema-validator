@@ -1,12 +1,19 @@
 Version History
 ***************
 
+Version 2.0
+===========
+
+* New major release, incompatible with past releases
+* Drop everything apart from schema validator as other elements have lost their significance
+* Depend on recent release of simplejson (2.1.3) to get good support for saving
+  and loading documents with Decimals efficiently
+
 Version 1.2.3
 =============
 
 * Change how setup.py finds the version of the code to make it pip install okay
   when simplejson is not installed yet. 
-
 
 Version 1.2.2
 =============

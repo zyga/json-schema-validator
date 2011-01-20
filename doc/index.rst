@@ -7,7 +7,6 @@ Linaro JSON
     installation.rst
     usage.rst
     reference.rst
-    tutorial.rst
     changes.rst
     hacking.rst
 

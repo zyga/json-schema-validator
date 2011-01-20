@@ -17,7 +17,7 @@
 # along with linaro-json.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Package with unit tests for launch_control
+Package with unit tests for linaro-json
 """
 
 import doctest
@@ -26,17 +26,6 @@ import unittest
 def app_modules():
     return [
             'linaro_json',
-            'linaro_json.decoder',
-            'linaro_json.encoder',
-            'linaro_json.impl',
-            'linaro_json.interface',
-            'linaro_json.pod',
-            'linaro_json.proxies',
-            'linaro_json.proxies.datetime_proxy',
-            'linaro_json.proxies.decimal_proxy',
-            'linaro_json.proxies.timedelta_proxy',
-            'linaro_json.proxies.uuid_proxy',
-            'linaro_json.proxy_registry',
             'linaro_json.schema',
             ]
 
@@ -44,7 +33,6 @@ def app_modules():
 def test_modules():
     return [
             'linaro_json.tests.test_schema',
-            'linaro_json.tests.test_utils_json_package',
             ]
 
 

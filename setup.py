@@ -19,15 +19,7 @@
 # along with linaro-json.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup, find_packages
-
-try:
-    # This can fail when install_requires is not yet available and we
-    # want to parse setup() to get to that list. During that time it's
-    # not really important to know the precise version, we will know it
-    # later once the deps are in place
-    from linaro_json import __version__
-except ImportError as ex:
-    __version__ = "unknown"
+from linaro_json import __version__
 
 
 setup(

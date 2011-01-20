@@ -20,38 +20,9 @@
 Universal JSON utilities developed by Linaro
 """
 
-from linaro_json.impl import json
-from linaro_json.decoder import PluggableJSONDecoder
-from linaro_json.encoder import PluggableJSONEncoder
-from linaro_json.interface import (
-    IComplexJSONType,
-    IFundamentalJSONType,
-    ISimpleJSONType,
-)
-from linaro_json.proxy_registry import (
-    ClassRegistry,
-    DefaultClassRegistry,
-)
-from linaro_json.pod import PlainOldData
-from linaro_json.schema import (
-    Schema,
-    SchemaError,
-    ValidationError,
-    Validator,
-)
-
-
-__version__ = "1.3.0.dev"
+__version__ = "2.0.0.dev"
 try:
     import versiontools
     __version__ = versiontools.Version(*__version__.split("."))
 except ImportError:
     pass
-
-
-def get_version():
-    """
-    Return a string representing the version of this package
-    """
-    return str(__version__)
-
