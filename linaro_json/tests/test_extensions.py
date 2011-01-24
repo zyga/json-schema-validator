@@ -17,28 +17,30 @@
 # along with linaro-json.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Module with proxy type for uuid.UUID
+Unit tests for JSON extensions
 """
 
-from uuid import UUID
+from testtools import TestCase
+from datetime import datetime
 
-from linaro_json.interface import ISimpleJSONType
-from linaro_json.proxy_registry import DefaultClassRegistry
-
-
-class UUIDProxy(ISimpleJSONType):
-
-    def __init__(self, obj):
-        self._obj = obj
-
-    def to_json(self):
-        return str(self._obj)
-
-    @classmethod
-    def from_json(self, json_str):
-        if not isinstance(json_str, basestring):
-            raise TypeError("Unable to decode UUID from a non-string")
-        return UUID(json_str)
+from linaro_json.extensions import datetime_extension
 
 
-DefaultClassRegistry.register_proxy(UUID, UUIDProxy)
+class DatetimeExtensionTests(TestCase):
+
+
+    reference_obj = datetime(2010, 12, 7, 23, 59, 58)
+    reference_text = "2010-12-07T23:59:58Z"
+
+
+    def test_datetime_to_json(self):
+        text = datetime_extension.to_json(self.reference_obj)
+        self.assertEqual(text, self.reference_text)
+
+    def test_datetime_from_json(self):
+        obj = datetime_extension.from_json(self.reference_text)
+        self.assertEqual(obj, self.reference_obj)
+
+
+
+

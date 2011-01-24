@@ -32,6 +32,7 @@ def app_modules():
 
 def test_modules():
     return [
+            'linaro_json.tests.test_extensions',
             'linaro_json.tests.test_schema',
             ]
 

@@ -28,9 +28,7 @@ setup(
     author = "Zygmunt Krynicki",
     author_email = "zygmunt.krynicki@linaro.org",
     description = "JSON manipulation utilities developed by the Linaro infrastructure team",
-    packages = ['linaro_json',
-                'linaro_json.proxies',
-                'linaro_json.tests'],
+    packages = find_packages(),
     url='https://launchpad.net/linaro-python-json',
     test_suite='linaro_json.tests.test_suite',
     classifiers=[
