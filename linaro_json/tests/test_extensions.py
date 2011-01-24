@@ -21,26 +21,31 @@ Unit tests for JSON extensions
 """
 
 from testtools import TestCase
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from linaro_json.extensions import datetime_extension
-
-
-class DatetimeExtensionTests(TestCase):
+from linaro_json.extensions import datetime_extension, timedelta_extension
 
 
-    reference_obj = datetime(2010, 12, 7, 23, 59, 58)
-    reference_text = "2010-12-07T23:59:58Z"
+class ExtensionTests(object):
 
-
-    def test_datetime_to_json(self):
-        text = datetime_extension.to_json(self.reference_obj)
+    def test_to_json(self):
+        text = self.extension.to_json(self.reference_obj)
         self.assertEqual(text, self.reference_text)
 
-    def test_datetime_from_json(self):
-        obj = datetime_extension.from_json(self.reference_text)
+    def test_from_json(self):
+        obj = self.extension.from_json(self.reference_text)
         self.assertEqual(obj, self.reference_obj)
 
 
+class DatetimeExtensionTests(TestCase, ExtensionTests):
+
+    reference_obj = datetime(2010, 12, 7, 23, 59, 58)
+    reference_text = "2010-12-07T23:59:58Z"
+    extension = datetime_extension
 
 
+class TimedeltaExtensionTests(TestCase, ExtensionTests):
+
+    reference_obj = timedelta(days=1, seconds=2, microseconds=3)
+    reference_text = "1d 2s 3us"
+    extension = timedelta_extension

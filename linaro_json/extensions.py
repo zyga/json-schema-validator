@@ -10,7 +10,8 @@ objects in a consistent way. Implements equivalent of schema:
 
 """
 
-from datetime import datetime
+from datetime import datetime, timedelta
+import re
 
 
 class datetime_extension(object):
@@ -39,9 +40,39 @@ class datetime_extension(object):
     FORMAT = "%Y-%m-%dT%H:%M:%SZ"
 
     @classmethod
-    def to_json(self, obj):
-        return obj.strftime(self.FORMAT)
+    def to_json(cls, obj):
+        return obj.strftime(cls.FORMAT)
 
     @classmethod
-    def from_json(self, doc):
-        return datetime.strptime(doc, self.FORMAT)
+    def from_json(cls, doc):
+        return datetime.strptime(doc, cls.FORMAT)
+
+
+class timedelta_extension(object):
+    """
+    Proxy for serializing datetime.timedelta instances
+    """
+    PATTERN = re.compile("^(\d+)d (\d+)s (\d+)us$")
+
+    @classmethod
+    def to_json(cls, obj):
+        """
+        Serialize wrapped datetime.timedelta instance to a string the
+        with the following format:
+            [DAYS]d [SECONDS]s [MICROSECONDS]us
+        """
+        return "{0}d {1}s {2}us".format(
+                obj.days, obj.seconds, obj.microseconds)
+
+    @classmethod
+    def from_json(cls, doc):
+        """
+        Deserialize JSON document (string) to datetime.timedelta instance
+        """
+        if not isinstance(doc, basestring):
+            raise TypeError("JSON document must be a string")
+        match = cls.PATTERN.match(doc)
+        if not match:
+            raise ValueError("JSON document must match expected pattern")
+        days, seconds, microseconds = map(int, match.groups())
+        return timedelta(days, seconds, microseconds)
