@@ -20,9 +20,9 @@
 Universal JSON utilities developed by Linaro
 """
 
-__version__ = "2.0.0.dev"
+__version__ = (2, 0, 0, "candidate", 1)
 try:
     import versiontools
-    __version__ = versiontools.Version(*__version__.split("."))
+    __version__ = versiontools.Version.from_tuple(__version__)
 except ImportError:
     pass

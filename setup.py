@@ -19,12 +19,13 @@
 # along with linaro-json.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup, find_packages
-from linaro_json import __version__
+import versiontools
+import linaro_json
 
 
 setup(
     name = 'linaro-json',
-    version = str(__version__),
+    version = versiontools.format_version(linaro_json.__version__),
     author = "Zygmunt Krynicki",
     author_email = "zygmunt.krynicki@linaro.org",
     description = "JSON manipulation utilities developed by the Linaro infrastructure team",
@@ -40,10 +41,10 @@ setup(
     ],
     install_requires = [
         'simplejson >= 2.1.3',
-        'versiontools >= 1.0.2',
+        'versiontools >= 1.1c1.dev21',
     ],
     setup_requires = [
-        'versiontools >= 1.0.2',
+        'versiontools >= 1.1c1.dev21',
     ],
     tests_require = [
         'testscenarios >= 0.2',
