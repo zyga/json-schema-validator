@@ -7,6 +7,8 @@ Version 2.0
 * New major release, incompatible with past releases
 * Drop everything apart from schema validator as other elements have lost their significance
 * Tweak requirements to support current Ubuntu LTS (10.04 aka Lucid)
+* Refresh installation instructions to point to the new PPA, provide links to
+  lp.net project page and pypi project page.
 
 Version 1.2.3
 =============
