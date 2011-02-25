@@ -6,8 +6,7 @@ Version 2.0
 
 * New major release, incompatible with past releases
 * Drop everything apart from schema validator as other elements have lost their significance
-* Depend on recent release of simplejson (2.1.3) to get good support for saving
-  and loading documents with Decimals efficiently
+* Tweak requirements to support current Ubuntu LTS (10.04 aka Lucid)
 
 Version 1.2.3
 =============
