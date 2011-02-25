@@ -40,14 +40,14 @@ setup(
         "Programming Language :: Python :: 2.6",
     ],
     install_requires = [
-        'simplejson >= 2.1.3',
-        'versiontools >= 1.1c1.dev21',
+        'simplejson >= 2.0.9',
+        'versiontools >= 1.1',
     ],
     setup_requires = [
-        'versiontools >= 1.1c1.dev21',
+        'versiontools >= 1.1',
     ],
     tests_require = [
-        'testscenarios >= 0.2',
+        'testscenarios >= 0.1',
         'testtools >= 0.9.2',
     ],
     zip_safe = True,
