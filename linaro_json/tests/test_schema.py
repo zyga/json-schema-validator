@@ -828,9 +828,9 @@ class ValidatorFailureTests(TestWithScenarios, TestCase):
         }),
         ("type_integer_got_float", {
             'schema': '{"type": "integer"}',
-            'data': '1.1',
+            'data': '1.5',
             'raises': ValidationError(
-                "1.1000000000000001 does not match type 'integer'",
+                "1.5 does not match type 'integer'",
                 "Object has incorrect type (expected integer)"),
             'object_expr': 'object',
             'schema_expr': 'schema.type',
