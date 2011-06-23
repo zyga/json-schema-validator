@@ -1,6 +1,12 @@
 Version History
 ***************
 
+Version 2.0.1
+=============
+
+* Make the package installable via pip by using new versiontools
+* Fix test suite to be agnostic to python's rounding of floats
+
 Version 2.0
 ===========
 
