@@ -21,11 +21,6 @@ To build the documentation from source you will also need:
 Installation Options
 ^^^^^^^^^^^^^^^^^^^^
 
-There are several installation options available:
-
-Using Python Package Index
---------------------------
-
 This package is being actively maintained and published in the `Python Package
 Index <http://http://pypi.python.org>`_. You can install it if you have `pip
 <http://pip.openplans.org/>`_ tool using just one line::
