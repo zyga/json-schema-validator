@@ -34,7 +34,7 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         ("License :: OSI Approved :: GNU Library or Lesser General Public"
-         " License (LGPL)",)
+         " License (LGPL)"),
         "Operating System :: OS Independent",
         "Programming Language :: Python :: 2.6"],
     install_requires=[
