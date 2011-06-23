@@ -1313,6 +1313,14 @@ class ValidatorSuccessTests(TestWithScenarios, TestCase):
             'schema': '{"type": {"type": "number"}}',
             'data': '5',
         }),
+        ("type_list_with_two_values_got_first_value", {
+            'schema': '{"type": ["number", "string"]}',
+            'data': '1',
+        }),
+        ("type_list_with_two_values_got_second_value", {
+            'schema': '{"type": ["number", "string"]}',
+            'data': '"string"',
+        }),
         ("property_ignored_on_non_objects", {
             'schema': '{"properties": {"foo": {"type": "number"}}}',
             'data': '"foobar"',
