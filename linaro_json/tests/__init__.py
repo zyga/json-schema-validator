@@ -23,18 +23,14 @@ Package with unit tests for linaro-json
 import doctest
 import unittest
 
+
 def app_modules():
-    return [
-            'linaro_json',
-            'linaro_json.schema',
-            ]
+    return ['linaro_json', 'linaro_json.schema']
 
 
 def test_modules():
-    return [
-            'linaro_json.tests.test_extensions',
-            'linaro_json.tests.test_schema',
-            ]
+    return ['linaro_json.tests.test_extensions',
+            'linaro_json.tests.test_schema']
 
 
 def test_suite():

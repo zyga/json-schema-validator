@@ -129,7 +129,7 @@ class Schema(object):
         if not isinstance(value, (basestring, dict, list)):
             raise SchemaError(
                 "type value {0!r} is not a simple type name, nested "
-                "schema nor a list of those".format( value))
+                "schema nor a list of those".format(value))
         if isinstance(value, list):
             type_list = value
         else:
@@ -142,8 +142,8 @@ class Schema(object):
             else:
                 if js_type in seen:
                     raise SchemaError(
-                        "type value {0!r} contains duplicate element"
-                        " {1!r}".format( value, js_type))
+                        ("type value {0!r} contains duplicate element"
+                         " {1!r}").format(value, js_type))
                 else:
                     seen.add(js_type)
                 if js_type not in (
@@ -423,7 +423,7 @@ class Schema(object):
         if not isinstance(value, (basestring, dict, list)):
             raise SchemaError(
                 "disallow value {0!r} is not a simple type name, nested "
-                "schema nor a list of those".format( value))
+                "schema nor a list of those".format(value))
         if isinstance(value, list):
             disallow_list = value
         else:

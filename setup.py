@@ -4,7 +4,7 @@
 #
 # Author: Zygmunt Krynicki <zygmunt.krynicki@linaro.org>
 #
-# This file is part of linaro-json. 
+# This file is part of linaro-json.
 #
 # linaro-json is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License version 3
@@ -20,31 +20,28 @@
 
 from setuptools import setup, find_packages
 
+
 setup(
-    name = 'linaro-json',
-    version = ":versiontools:linaro_json:__version__",
-    author = "Zygmunt Krynicki",
-    author_email = "zygmunt.krynicki@linaro.org",
-    description = "JSON manipulation utilities developed by the Linaro infrastructure team",
-    packages = find_packages(),
+    name='linaro-json',
+    version=":versiontools:linaro_json:__version__",
+    author="Zygmunt Krynicki",
+    author_email="zygmunt.krynicki@linaro.org",
+    description="JSON Schema Validator",
+    packages=find_packages(),
     url='https://launchpad.net/linaro-python-json',
     test_suite='linaro_json.tests.test_suite',
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
+        ("License :: OSI Approved :: GNU Library or Lesser General Public"
+         " License (LGPL)",)
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 2.6",
-    ],
-    install_requires = [
-        'simplejson >= 2.0.9',
-    ],
-    setup_requires = [
-        'versiontools >= 1.3.1',
-    ],
-    tests_require = [
+        "Programming Language :: Python :: 2.6"],
+    install_requires=[
+        'simplejson >= 2.0.9'],
+    setup_requires=[
+        'versiontools >= 1.3.1'],
+    tests_require=[
         'testscenarios >= 0.1',
-        'testtools >= 0.9.2',
-    ],
-    zip_safe = True,
-)
+        'testtools >= 0.9.2'],
+    zip_safe=True)
