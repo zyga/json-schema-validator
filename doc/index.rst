@@ -1,5 +1,5 @@
-Linaro JSON 
-***********
+JSON Schema Validator 
+*********************
 
 .. toctree::
     :maxdepth: 2
