@@ -18,19 +18,6 @@
 
 """
 JSON schema validator for python
-
-.. note::
-    Only a subset of schema features are currently supported.
-    Unsupported features are detected and raise a NotImplementedError
-    when you call :func:`Validator.validate`
-
-.. warning::
-    This implementation was based on the *second draft* of the specification
-    A third draft was published on the 22nd Nov 2010. This draft introduced
-    several important changes that are not yet implemented.
-
-.. seealso::
-    http://json-schema.org/ for details about the schema
 """
 
 import datetime
