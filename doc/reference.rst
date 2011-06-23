@@ -6,4 +6,4 @@ Code Documentation
     
     reference/schema.rst
 
-.. automodule:: linaro_json
+.. automodule:: json_schema_validator

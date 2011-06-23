@@ -1,5 +1,5 @@
 JSON Schema Validation
 ^^^^^^^^^^^^^^^^^^^^^^
 
-.. automodule:: linaro_json.schema
+.. automodule:: json_schema_validator.schema
     :members:

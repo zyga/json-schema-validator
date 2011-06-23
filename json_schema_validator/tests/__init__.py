@@ -2,22 +2,22 @@
 #
 # Author: Zygmunt Krynicki <zygmunt.krynicki@linaro.org>
 #
-# This file is part of linaro-json.
+# This file is part of json-schema-validator.
 #
-# linaro-json is free software: you can redistribute it and/or modify
+# json-schema-validator is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License version 3
 # as published by the Free Software Foundation
 #
-# linaro-json is distributed in the hope that it will be useful,
+# json-schema-validator is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with linaro-json.  If not, see <http://www.gnu.org/licenses/>.
+# along with json-schema-validator.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Package with unit tests for linaro-json
+Package with unit tests for json-schema-validator
 """
 
 import doctest
@@ -25,12 +25,12 @@ import unittest
 
 
 def app_modules():
-    return ['linaro_json', 'linaro_json.schema']
+    return ['json_schema_validator', 'json_schema_validator.schema']
 
 
 def test_modules():
-    return ['linaro_json.tests.test_extensions',
-            'linaro_json.tests.test_schema']
+    return ['json_schema_validator.tests.test_extensions',
+            'json_schema_validator.tests.test_schema']
 
 
 def test_suite():
