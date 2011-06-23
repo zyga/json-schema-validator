@@ -28,7 +28,6 @@ Github is used for:
 * Hosting source code (in git)
 * Reporting and tracking bugs
 
-
 Launchpad.net is used for:
 
 * Hosting source code (as bzr mirror)
