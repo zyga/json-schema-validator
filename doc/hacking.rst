@@ -2,18 +2,15 @@
 Hacking
 *******
 
-Dear hackers.
-
-The project is hosted on http://launchpad.net/linaro-python-json/ *and*
-http://pypi.python.org/linaro-json/. There is a name difference, the canonical
-name is ``linaro-json``. I cannot rename the project on launchpad so we'll have
-to live with both.
+The project is hosted on github
+(http://github.com/zyga/json-schema-validator/), feel free to fork it and
+propose a pull request.
 
 Goals
 -----
 
-The goal of this project is to construct an universal collection of tools to
-work with JSON documents in python.
+The goal of this project is to construct a complete and fast implementation of the
+JSON Schema as defined by http://json-schema.org/. 
 
 JSON is powerful because of the simplicity.  Unlike the baroque YAML it thrives
 on being easy to implement in any language, correctly, completely, with
@@ -26,11 +23,16 @@ and integrity checking.
 Infrastructure
 --------------
 
+Github is used for:
+
+* Hosting source code (in git)
+* Reporting and tracking bugs
+
+
 Launchpad.net is used for:
 
-* Hosting source code (in bzr)
-* Reporting and tracking bugs
-* Project management (release tracking, feature tracking, etc)
+* Hosting source code (as bzr mirror)
+* Packaging aid for Ubuntu
 
 PyPi is used for:
 

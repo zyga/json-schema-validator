@@ -1,6 +1,11 @@
 Version History
 ***************
 
+Version 2.1
+===========
+
+* Renamed from linaro-json to json-schema-validator and moved to github.
+
 Version 2.0.1
 =============
 
@@ -37,7 +42,7 @@ Version 1.2.1
 Version 1.2
 ===========
 
-* Change name to linaro-json
+* Change name to json-schema-validator
 * Add dependency on versiontools
 * Register on pypi
 * Add ReST documentation
