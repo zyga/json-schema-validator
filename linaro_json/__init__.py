@@ -21,8 +21,3 @@ Universal JSON utilities developed by Linaro
 """
 
 __version__ = (2, 0, 0, "final", 0)
-try:
-    import versiontools
-    __version__ = versiontools.Version.from_tuple(__version__)
-except ImportError:
-    pass

@@ -19,9 +19,6 @@
 # along with linaro-json.  If not, see <http://www.gnu.org/licenses/>.
 
 from setuptools import setup, find_packages
-import versiontools
-import linaro_json
-
 
 setup(
     name = 'linaro-json',
