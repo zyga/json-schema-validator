@@ -25,7 +25,7 @@ import linaro_json
 
 setup(
     name = 'linaro-json',
-    version = versiontools.format_version(linaro_json.__version__),
+    version = ":versiontools:linaro_json:__version__",
     author = "Zygmunt Krynicki",
     author_email = "zygmunt.krynicki@linaro.org",
     description = "JSON manipulation utilities developed by the Linaro infrastructure team",
@@ -41,10 +41,9 @@ setup(
     ],
     install_requires = [
         'simplejson >= 2.0.9',
-        'versiontools >= 1.1',
     ],
     setup_requires = [
-        'versiontools >= 1.1',
+        'versiontools >= 1.3.1',
     ],
     tests_require = [
         'testscenarios >= 0.1',
