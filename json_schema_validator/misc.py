@@ -17,7 +17,12 @@
 # along with json-schema-validator.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-JSON Schema Validator
+Stuff that does not belong anywhere else
 """
 
-__version__ = (2, 1, 0, "dev", 0)
+
+import decimal
+
+
+# List of types recognized as numeric
+NUMERIC_TYPES = (int, float, decimal.Decimal)

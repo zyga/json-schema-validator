@@ -5,6 +5,7 @@ Version 2.1
 ===========
 
 * Renamed from linaro-json to json-schema-validator and moved to github.
+* Reorganized the package into more sub-modules
 
 Version 2.0.1
 =============

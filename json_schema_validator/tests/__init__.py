@@ -25,12 +25,23 @@ import unittest
 
 
 def app_modules():
-    return ['json_schema_validator', 'json_schema_validator.schema']
+    return [
+        'json_schema_validator',
+        'json_schema_validator.errors',
+        'json_schema_validator.extensions',
+        'json_schema_validator.misc',
+        'json_schema_validator.schema',
+        'json_schema_validator.shortcuts',
+        'json_schema_validator.validator',
+    ]
 
 
 def test_modules():
-    return ['json_schema_validator.tests.test_extensions',
-            'json_schema_validator.tests.test_schema']
+    return [
+        'json_schema_validator.tests.test_extensions',
+        'json_schema_validator.tests.test_schema',
+        'json_schema_validator.tests.test_validator',
+    ]
 
 
 def test_suite():
@@ -42,6 +53,7 @@ def test_suite():
     suite = unittest.TestSuite()
     loader = unittest.TestLoader()
     for name in modules:
+        __import__(name, fromlist=[''])
         tests = loader.loadTestsFromName(name)
         suite.addTests(tests)
         doctests = doctest.DocTestSuite(name)
