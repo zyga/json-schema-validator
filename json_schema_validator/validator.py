@@ -126,6 +126,7 @@ class Validator(object):
         else:
             self._validate_enum()
             self._validate_format()
+            self._validate_pattern()
         self._report_unsupported()
 
     def _report_error(self, legacy_message, new_message=None,
@@ -186,8 +187,6 @@ class Validator(object):
             raise NotImplementedError("maxItems is not supported")
         if schema.uniqueItems != False:
             raise NotImplementedError("uniqueItems is not supported")
-        if schema.pattern is not None:
-            raise NotImplementedError("pattern is not supported")
         if schema.minLength != 0:
             raise NotImplementedError("minLength is not supported")
         if schema.maxLength is not None:
@@ -235,7 +234,25 @@ class Validator(object):
                 "Object has incorrect type (expected {type})".format(
                     type=json_type),
                 schema_suffix=".type")
-
+    
+    def _validate_pattern(self):
+        ptn = self._schema.pattern
+        obj = self._object
+        
+        if not isinstance(obj, string):
+            return
+        
+        if re.match(ptn,obj):
+            return
+        else:
+            self._report_error(
+                "{obj!r} does not match pattern {ptn!r}".format(
+                    obj=obj,ptn=ptn),
+                "Object does not match pattern (expected {ptn})".format(
+                    ptn=ptn),
+                sechema_suffic=".pattern"
+            )
+        
     def _validate_format(self):
         fmt = self._schema.format
         obj = self._object
@@ -251,6 +268,15 @@ class Validator(object):
                         obj=obj),
                     "Object is not a string representing JSON date-time",
                     schema_suffix=".format")
+        if fmt == 'regex'
+            try:
+                re.compile(obj)
+            except:
+                self._report_error(
+                    "{obj!r} is not a string representing a regex".format(
+                        obj=obj),
+                    "Object is not a string representing a regex",
+                    schema_suffic=".format")
         else:
             raise NotImplementedError("format {0!r} is not supported".format(format))
 
