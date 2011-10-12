@@ -20,6 +20,7 @@
 Validator implementation
 """
 
+import re
 import datetime
 import itertools
 import types
@@ -234,14 +235,14 @@ class Validator(object):
                 "Object has incorrect type (expected {type})".format(
                     type=json_type),
                 schema_suffix=".type")
-    
+
     def _validate_pattern(self):
         ptn = self._schema.pattern
         obj = self._object
-        
-        if not isinstance(obj, string):
+
+        if not isinstance(obj, basestring):
             return
-        
+
         if re.match(ptn,obj):
             return
         else:
@@ -252,7 +253,7 @@ class Validator(object):
                     ptn=ptn),
                 sechema_suffic=".pattern"
             )
-        
+
     def _validate_format(self):
         fmt = self._schema.format
         obj = self._object
@@ -268,7 +269,7 @@ class Validator(object):
                         obj=obj),
                     "Object is not a string representing JSON date-time",
                     schema_suffix=".format")
-        if fmt == 'regex'
+        if fmt == 'regex':
             try:
                 re.compile(obj)
             except:
