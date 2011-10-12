@@ -240,19 +240,20 @@ class Validator(object):
         ptn = self._schema.pattern
         obj = self._object
 
+        if ptn is None:
+            return
         if not isinstance(obj, basestring):
             return
-
-        if re.match(ptn,obj):
+        if re.match(ptn, obj):
             return
-        else:
-            self._report_error(
-                "{obj!r} does not match pattern {ptn!r}".format(
-                    obj=obj,ptn=ptn),
-                "Object does not match pattern (expected {ptn})".format(
-                    ptn=ptn),
-                sechema_suffic=".pattern"
-            )
+
+        self._report_error(
+            "{obj!r} does not match pattern {ptn!r}".format(
+                obj=obj,ptn=ptn),
+            "Object does not match pattern (expected {ptn})".format(
+                ptn=ptn),
+            sechema_suffic=".pattern"
+        )
 
     def _validate_format(self):
         fmt = self._schema.format
