@@ -278,7 +278,7 @@ class Validator(object):
                     "{obj!r} is not a string representing a regex".format(
                         obj=obj),
                     "Object is not a string representing a regex",
-                    schema_suffic=".format")
+                    schema_suffix=".format")
         else:
             raise NotImplementedError("format {0!r} is not supported".format(format))
 
