@@ -280,7 +280,7 @@ class Validator(object):
                     "Object is not a string representing a regex",
                     schema_suffix=".format")
         else:
-            raise NotImplementedError("format {0!r} is not supported".format(format))
+            raise NotImplementedError("format {0!r} is not supported".format(fmt))
 
     def _validate_properties(self):
         obj = self._object
