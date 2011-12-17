@@ -587,6 +587,12 @@ class SchemaTests(TestWithScenarios, TestCase):
                 'format': "date-time"
             },
         }),
+        ("format_regex", {
+            'schema': '{"format": "regex"}',
+            'expected': {
+                'format': "regex"
+            },
+        }),
         ("format_wrong_type", {
             'schema': '{"format": 5}',
             'access': 'format',

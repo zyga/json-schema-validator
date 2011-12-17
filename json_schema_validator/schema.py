@@ -317,6 +317,7 @@ class Schema(object):
                 "format value {0!r} is not a string".format(value))
         if value in [
             'date-time',
+            'regex',
         ]:
             return value
         raise NotImplementedError(
