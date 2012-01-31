@@ -1,0 +1,2 @@
+versiontools >= 1.8.2
+GitPython >= 0.1.6
