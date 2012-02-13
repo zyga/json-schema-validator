@@ -71,11 +71,18 @@ class Schema(object):
                 "schema nor a list of those".format(value))
         if isinstance(value, list):
             type_list = value
+            # Union types have to have at least two alternatives
+            if len(type_list) < 2:
+                raise SchemaError(
+                    "union type {0!r} is too short".format(value))
         else:
             type_list = [value]
         seen = set()
         for js_type in type_list:
             if isinstance(js_type, dict):
+                # no nested validation here
+                pass
+            elif isinstance(js_type, list):
                 # no nested validation here
                 pass
             else:
@@ -91,7 +98,7 @@ class Schema(object):
                     raise SchemaError(
                         "type value {0!r} is not a simple type "
                         "name".format(js_type))
-        return type_list
+        return value
 
     @property
     def properties(self):

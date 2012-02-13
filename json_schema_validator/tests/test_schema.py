@@ -35,50 +35,60 @@ class SchemaTests(TestWithScenarios, TestCase):
         ('type_default', {
             'schema': '{}',
             'expected': {
-                'type': ['any']
+                'type': 'any'
             },
         }),
         ('type_string', {
             'schema': '{"type": "string"}',
             'expected': {
-                'type': ['string']
+                'type': 'string'
             },
         }),
         ('type_number', {
             'schema': '{"type": "number"}',
             'expected': {
-                'type': ['number']
+                'type': 'number'
             },
         }),
         ('type_integer', {
             'schema': '{"type": "integer"}',
             'expected': {
-                'type': ['integer']
+                'type': 'integer'
             },
         }),
         ('type_boolean', {
             'schema': '{"type": "boolean"}',
             'expected': {
-                'type': ['boolean']
+                'type': 'boolean'
             },
         }),
         ('type_object', {
             'schema': '{"type": "object"}',
             'expected': {
-                'type': ['object']
+                'type': 'object'
             },
         }),
         ('type_array', {
             'schema': '{"type": "array"}',
             'expected': {
-                'type': ['array']
+                'type': 'array'
             },
         }),
         ('type_complex_subtype', {
             'schema': '{"type": {}}',
             'expected': {
-                'type': [{}],
+                'type': {},
             },
+        }),
+        ("type_empty_list", {
+            'schema': '{"type": []}',
+            'access': 'type',
+            'raises': SchemaError("union type [] is too short")
+        }),
+        ("type_list_with_one_item", {
+            'schema': '{"type": ["number"]}',
+            'access': 'type',
+            'raises': SchemaError("union type ['number'] is too short")
         }),
         ('type_list', {
             'schema': '{"type": ["string", "number"]}',
