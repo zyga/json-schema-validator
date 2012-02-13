@@ -200,41 +200,65 @@ class Validator(object):
             raise NotImplementedError("disallow is not supported")
 
     def _validate_type(self):
-        obj = self._object
         schema = self._schema
-        for json_type in schema.type:
-            if json_type == "any":
+        json_type = schema.type
+        if json_type == "any":
+            return
+        obj = self._object
+        if json_type == "boolean":
+            # Bool is special cased because in python there is no
+            # way to test for isinstance(something, bool) that would
+            # not catch isinstance(1, bool) :/
+            if obj is not True and obj is not False:
+                self._report_error(
+                    "{obj!r} does not match type {type!r}".format(
+                        obj=obj, type=json_type),
+                    "Object has incorrect type (expected boolean)",
+                    schema_suffix=".type")
+        elif isinstance(json_type, dict):
+            # Nested type check. This is pretty odd case. Here we
+            # don't change our object stack (it's the same object).
+            self._push_schema(Schema(json_type), ".type")
+            self._validate()
+            self._pop_schema()
+        elif isinstance(json_type, list):
+            # Alternative type check, here we may match _any_ of the types
+            # in the list to be considered valid.
+            json_type_list = json_type
+            if json_type == []:
                 return
-            if json_type == "boolean":
-                # Bool is special cased because in python there is no
-                # way to test for isinstance(something, bool) that would
-                # not catch isinstance(1, bool) :/
-                if obj is not True and obj is not False:
-                    self._report_error(
-                        "{obj!r} does not match type {type!r}".format(
-                            obj=obj, type=json_type),
-                        "Object has incorrect type (expected boolean)",
-                        schema_suffix=".type")
-                break
-            elif isinstance(json_type, dict):
-                # Nested type check. This is pretty odd case. Here we
-                # don't change our object stack (it's the same object).
-                self._push_schema(Schema(json_type), ".type")
-                self._validate()
-                self._pop_schema()
-                break
-            else:
-                # Simple type check
-                if isinstance(obj, self.JSON_TYPE_MAP[json_type]):
-                    # First one that matches, wins
+            for index, json_type in enumerate(json_type_list):
+                # Aww, ugly. The level of packaging around Schema is annoying
+                self._push_schema(
+                    Schema({'type': json_type}),
+                    ".type.%d" % index)
+                try:
+                    self._validate()
+                except ValidationError:
+                    # Ignore errors, we just want one thing to match
+                    pass
+                else:
+                    # We've got a match - break the loop
                     break
+                finally:
+                    # Pop the schema regardless of match/mismatch
+                    self._pop_schema()
+            else:
+                # We were not interupted (no break) so we did not match
+                self._report_error(
+                    "{obj!r} does not match any of the types in {type!r}".format(
+                        obj=obj, type=json_type_list),
+                    "Object has incorrect type (multiple types possible)",
+                    schema_suffix=".type")
         else:
-            self._report_error(
-                "{obj!r} does not match type {type!r}".format(
-                    obj=obj, type=json_type),
-                "Object has incorrect type (expected {type})".format(
-                    type=json_type),
-                schema_suffix=".type")
+            # Simple type check
+            if not isinstance(obj, self.JSON_TYPE_MAP[json_type]):
+                self._report_error(
+                    "{obj!r} does not match type {type!r}".format(
+                        obj=obj, type=json_type),
+                    "Object has incorrect type (expected {type})".format(
+                        type=json_type),
+                    schema_suffix=".type")
 
     def _validate_pattern(self):
         ptn = self._schema.pattern

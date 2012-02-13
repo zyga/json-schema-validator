@@ -202,6 +202,16 @@ class ValidatorFailureTests(TestWithScenarios, TestCase):
             'object_expr': 'object',
             'schema_expr': 'schema.type',
         }),
+        ("type_list_got_mismatching_item", {
+            'schema': '{"type": ["string", "number"]}',
+            'data': '{}',
+            'raises': ValidationError(
+                "{} does not match any of the types in ['string', 'number']",
+                "Object has incorrect type (multiple types possible)",
+                ".type"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.type',
+        }),
         ("property_check_is_not_primitive", {
             'schema': """
             {
