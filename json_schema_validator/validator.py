@@ -276,7 +276,7 @@ class Validator(object):
                 obj=obj,ptn=ptn),
             "Object does not match pattern (expected {ptn})".format(
                 ptn=ptn),
-            sechema_suffic=".pattern"
+            schema_suffix=".pattern"
         )
 
     def _validate_format(self):
