@@ -375,6 +375,8 @@ class Validator(object):
             # If we want a list of unique items and the lenght of unique
             # elements is different from the length of the full list
             # then validation fails.
+            # This implementation isn't strictly compatible with the specs, because
+            # we are not checking unique dicts.
             self._report_error(
                 "Repeated items found in {obj!r}".format(obj=obj),
                 "Repeated items found in array",
