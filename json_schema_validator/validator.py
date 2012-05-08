@@ -186,8 +186,6 @@ class Validator(object):
             raise NotImplementedError("minItems is not supported")
         if schema.maxItems is not None:
             raise NotImplementedError("maxItems is not supported")
-        if schema.uniqueItems != False:
-            raise NotImplementedError("uniqueItems is not supported")
         if schema.minLength != 0:
             raise NotImplementedError("minLength is not supported")
         if schema.maxLength is not None:
@@ -373,6 +371,14 @@ class Validator(object):
         if items_schema_json == {}:
             # default value, don't do anything
             return
+        if schema.uniqueItems is True and len(set(obj)) != len(obj):
+            # If we want a list of unique items and the lenght of unique
+            # elements is different from the length of the full list
+            # then validation fails.
+            self._report_error(
+                "Repeated items found in {obj!r}",
+                "Repeated items found in object",
+                schema_suffix=".items")
         if isinstance(items_schema_json, dict):
             self._push_array_schema()
             for index, item in enumerate(obj):
