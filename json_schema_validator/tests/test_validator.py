@@ -365,6 +365,20 @@ class ValidatorFailureTests(TestWithScenarios, TestCase):
             'object_expr': 'object[4]',
             'schema_expr': 'schema.additionalProperties.type',
         }),
+        ("array_with_array_schema_and_uniqueItems_is_True", {
+            'schema': """
+            {
+                "type": "array",
+                "items": {"type": "string"},
+                "uniqueItems": true
+            }""",
+            'data': '["foo", "bar", "foo"]',
+            'raises': ValidationError(
+                "Repeated items found in ['foo', 'bar', 'foo']",
+                "Repeated items found in array"),
+            'object_expr': 'object',
+            'schema_expr': 'schema.items',
+        }),
         ("requires_with_simple_property_name_can_report_problems", {
             'schema': """
             {
@@ -734,6 +748,15 @@ class ValidatorSuccessTests(TestWithScenarios, TestCase):
         ("format_date_time_works", {
             'schema': '{"format": "date-time"}',
             'data': '"2010-11-12T14:38:55Z"',
+        }),
+        ("array_with_array_schema_and_uniqueItems_is_True", {
+            'schema': """
+            {
+                "type": "array",
+                "items": {"type": "string"},
+                "uniqueItems": true
+            }""",
+            'data': '["foo", "bar", "baz"]',
         }),
     ]
 
