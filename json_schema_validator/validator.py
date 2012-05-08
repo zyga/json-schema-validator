@@ -371,13 +371,13 @@ class Validator(object):
         if items_schema_json == {}:
             # default value, don't do anything
             return
-        if schema.uniqueItems is True and len(set(obj)) != len(obj):
+        if isinstance(obj, list) and schema.uniqueItems is True and len(set(obj)) != len(obj):
             # If we want a list of unique items and the lenght of unique
             # elements is different from the length of the full list
             # then validation fails.
             self._report_error(
-                "Repeated items found in {obj!r}",
-                "Repeated items found in object",
+                "Repeated items found in {obj!r}".format(obj=obj),
+                "Repeated items found in array",
                 schema_suffix=".items")
         if isinstance(items_schema_json, dict):
             self._push_array_schema()
