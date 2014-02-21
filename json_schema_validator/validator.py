@@ -128,6 +128,10 @@ class Validator(object):
             self._validate_enum()
             self._validate_format()
             self._validate_pattern()
+            if isinstance(obj, basestring):
+                self._validate_length()
+            elif isinstance(obj, NUMERIC_TYPES):
+                self._validate_range()
         self._report_unsupported()
 
     def _report_error(self, legacy_message, new_message=None,
@@ -178,18 +182,6 @@ class Validator(object):
 
     def _report_unsupported(self):
         schema = self._schema
-        if schema.minimum is not None:
-            raise NotImplementedError("minimum is not supported")
-        if schema.maximum is not None:
-            raise NotImplementedError("maximum is not supported")
-        if schema.minItems != 0:
-            raise NotImplementedError("minItems is not supported")
-        if schema.maxItems is not None:
-            raise NotImplementedError("maxItems is not supported")
-        if schema.minLength != 0:
-            raise NotImplementedError("minLength is not supported")
-        if schema.maxLength is not None:
-            raise NotImplementedError("maxLength is not supported")
         if schema.contentEncoding is not None:
             raise NotImplementedError("contentEncoding is not supported")
         if schema.divisibleBy != 1:
@@ -363,6 +355,42 @@ class Validator(object):
                     "Object does not match any value in enumeration",
                     schema_suffix=".enum")
 
+    def _validate_length(self):
+        obj = self._object
+        schema = self._schema
+        if schema.minLength is not None:
+            if len(obj) < schema.minLength:
+                self._report_error(
+                    "{obj!r} does not meet the minimum length"
+                    " {minLength!r}".format(obj=obj, minLength=schema.minLength),
+                    "Object does not meet the minimum length",
+                    schema_suffix=".minLength")
+        if schema.maxLength is not None:
+            if len(obj) > schema.maxLength:
+                self._report_error(
+                    "{obj!r} exceeds the maximum length"
+                    " {maxLength!r}".format(obj=obj, maxLength=schema.maxLength),
+                    "Object exceeds the maximum length",
+                    schema_suffix=".maxLength")
+
+    def _validate_range(self):
+        obj = self._object
+        schema = self._schema
+        if schema.minimum is not None:
+            if obj < schema.minimum or (obj == schema.minimum and not schema.minimumCanEqual):
+                self._report_error(
+                    "{obj!r} is less than the minimum"
+                    " {minimum!r}".format(obj=obj, minimum=schema.minimum),
+                    "Object is less than the minimum",
+                    schema_suffix=".minimum")
+        if schema.maximum is not None:
+            if obj > schema.maximum or (obj == schema.maximum and not schema.maximumCanEqual):
+                self._report_error(
+                    "{obj!r} is greater than the maximum"
+                    " {maximum!r}".format(obj=obj, maximum=schema.maximum),
+                    "Object is greater than the maximum",
+                    schema_suffix=".maximum")
+
     def _validate_items(self):
         obj = self._object
         schema = self._schema
@@ -372,7 +400,7 @@ class Validator(object):
             # default value, don't do anything
             return
         if isinstance(obj, list) and schema.uniqueItems is True and len(set(obj)) != len(obj):
-            # If we want a list of unique items and the lenght of unique
+            # If we want a list of unique items and the length of unique
             # elements is different from the length of the full list
             # then validation fails.
             # This implementation isn't strictly compatible with the specs, because
@@ -381,6 +409,20 @@ class Validator(object):
                 "Repeated items found in {obj!r}".format(obj=obj),
                 "Repeated items found in array",
                 schema_suffix=".items")
+        if schema.minItems:
+            if len(obj) < schema.minItems:
+                self._report_error(
+                    "{obj!r} has fewer than the minimum number of items"
+                    " {minItems!r}".format(obj=obj, minimum=schema.minItems),
+                    "Object has fewer than the minimum number of items",
+                    schema_suffix=".minItems")
+        if schema.maxItems is not None:
+            if len(obj) > schema.maxItems:
+                self._report_error(
+                    "{obj!r} has more than the maximum number of items"
+                    " {maxItems!r}".format(obj=obj, minimum=schema.maxItems),
+                    "Object has more than the maximum number of items",
+                    schema_suffix=".maxItems")
         if isinstance(items_schema_json, dict):
             self._push_array_schema()
             for index, item in enumerate(obj):
