@@ -14,6 +14,6 @@ $ pip install json-schema-validator
 Testing
 =======
 
-You will need tox (get it from pip) as well as python2.6 and python2.7
+You will need tox (get it from pip) as python2.7
 
 $ tox
