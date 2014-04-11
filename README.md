@@ -1,4 +1,4 @@
-.. image:: https://travis-ci.org/zyga/json-schema-validator.svg?branch=master   :target: https://travis-ci.org/zyga/json-schema-validator
+[![Build Status](https://travis-ci.org/zyga/json-schema-validator.svg?branch=master)](https://travis-ci.org/zyga/json-schema-validator)
 
 About
 =====
