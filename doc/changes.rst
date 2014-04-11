@@ -1,6 +1,22 @@
 Version History
 ***************
 
+Version 2.3.1
+=============
+
+* Maintenance release
+
+Version 2.3
+===========
+
+* Add support for minimum, maximum, minLength, maxLength, minItems, maxItems
+  validators
+
+Version 2.2
+===========
+
+* Maintenance release
+
 Version 2.1
 ===========
 
