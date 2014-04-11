@@ -107,7 +107,7 @@ class ValidatorFailureTests(TestWithScenarios, TestCase):
             'schema': '{"type": "boolean"}',
             'data': '""',
             'raises': ValidationError(
-                "'' does not match type 'boolean'",
+                "u'' does not match type 'boolean'",
                 "Object has incorrect type (expected boolean)"),
             'object_expr': 'object',
             'schema_expr': 'schema.type',
@@ -170,7 +170,7 @@ class ValidatorFailureTests(TestWithScenarios, TestCase):
             'schema': '{"type": "null"}',
             'data': '""',
             'raises': ValidationError(
-                "'' does not match type 'null'",
+                "u'' does not match type 'null'",
                 "Object has incorrect type (expected null)"),
             'object_expr': 'object',
             'schema_expr': 'schema.type',
