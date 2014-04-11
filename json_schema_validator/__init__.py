@@ -20,4 +20,4 @@
 JSON Schema Validator
 """
 
-__version__ = (2, 3, 0, "final", 0)
+__version__ = (2, 3, 1, "final", 0)
