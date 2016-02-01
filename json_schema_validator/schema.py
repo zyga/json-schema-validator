@@ -21,9 +21,13 @@ Helper module to work with raw JSON Schema
 """
 
 import re
+import sys
 
 from json_schema_validator.errors import SchemaError
 from json_schema_validator.misc import NUMERIC_TYPES
+
+if sys.version_info[0] > 2:
+    basestring = (str, )
 
 
 class Schema(object):

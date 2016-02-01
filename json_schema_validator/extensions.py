@@ -26,8 +26,13 @@ objects in a consistent way. Implements equivalent of schema:
 }
 """
 
-from datetime import datetime, timedelta
 import re
+import sys
+
+from datetime import datetime, timedelta
+
+if sys.version_info[0] > 2:
+    basestring = (str, )
 
 
 class datetime_extension(object):
