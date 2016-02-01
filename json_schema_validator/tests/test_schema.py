@@ -20,6 +20,8 @@
 Unit tests for JSON schema
 """
 
+import sys
+
 import simplejson
 
 from testscenarios import TestWithScenarios
@@ -27,6 +29,8 @@ from testtools import TestCase
 
 from json_schema_validator.errors import SchemaError
 from json_schema_validator.schema import Schema
+
+PY35 = sys.version_info[0:2] >= (3, 5)
 
 
 class SchemaTests(TestWithScenarios, TestCase):
@@ -452,7 +456,10 @@ class SchemaTests(TestWithScenarios, TestCase):
             'access': 'pattern',
             'raises': SchemaError(
                 "pattern value '[unterminated' is not a valid regular"
-                " expression: unexpected end of regular expression"),
+                " expression: " +
+                ("unexpected end of regular expression" if not PY35 else
+                 "unterminated character set at position 0"
+                 )),
         }),
         ("minLength_default", {
             'schema': '{}',
@@ -770,7 +777,7 @@ class SchemaTests(TestWithScenarios, TestCase):
     def test_schema_attribute(self):
         schema = Schema(simplejson.loads(self.schema))
         if hasattr(self, 'expected'):
-            for attr, expected_value in self.expected.iteritems():
+            for attr, expected_value in self.expected.items():
                 self.assertEqual(
                     expected_value, getattr(schema, attr))
         elif hasattr(self, 'access') and hasattr(self, 'raises'):

@@ -24,10 +24,17 @@ import re
 import datetime
 import itertools
 import types
+import sys
 
 from json_schema_validator.errors import ValidationError
 from json_schema_validator.misc import NUMERIC_TYPES
 from json_schema_validator.schema import Schema
+
+if sys.version_info[0] > 2:
+    basestring = (str, )
+    zip_longest = itertools.zip_longest
+else:
+    zip_longest = itertools.izip_longest
 
 
 class Validator(object):
@@ -44,7 +51,7 @@ class Validator(object):
         "integer": int,
         "object": dict,
         "array": list,
-        "null": types.NoneType,
+        "null": None.__class__,
     }
 
     def __init__(self):
@@ -300,7 +307,7 @@ class Validator(object):
         obj = self._object
         schema = self._schema
         assert isinstance(obj, dict)
-        for prop in schema.properties.iterkeys():
+        for prop in schema.properties.keys():
             self._push_property_schema(prop)
             if prop in obj:
                 self._push_property_object(prop)
@@ -322,7 +329,7 @@ class Validator(object):
         if self._schema.additionalProperties is False:
             # Additional properties are disallowed
             # Report exception for each unknown property
-            for prop in obj.iterkeys():
+            for prop in obj.keys():
                 if prop not in self._schema.properties:
                     self._report_error(
                         "{obj!r} has unknown property {prop!r} and"
@@ -335,7 +342,7 @@ class Validator(object):
         else:
             # Check each property against this object
             self._push_additional_property_schema()
-            for prop in obj.iterkeys():
+            for prop in obj.keys():
                 self._push_property_object(prop)
                 self._validate()
                 self._pop_object()
@@ -456,7 +463,7 @@ class Validator(object):
             # there may be more items in our array than in the schema)
             # with additionalProperties which by now is not False
             for index, (item, item_schema_json) in enumerate(
-                itertools.izip_longest(
+                zip_longest(
                     obj, items_schema_json,
                     fillvalue=schema.additionalProperties)):
                 item_schema = Schema(item_schema_json)

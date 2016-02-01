@@ -37,7 +37,9 @@ setup(
         ("License :: OSI Approved :: GNU Library or Lesser General Public"
          " License (LGPL)"),
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 2.7"],
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
+    ],
     install_requires=[
         'simplejson >= 2.0.9'],
     setup_requires=[
