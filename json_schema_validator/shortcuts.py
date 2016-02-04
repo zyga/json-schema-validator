@@ -20,16 +20,22 @@
 One liners that make the code shorter
 """
 
-import simplejson
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 from json_schema_validator.schema import Schema
 from json_schema_validator.validator import Validator
 
+_default_deserializer = json.loads
 
-def validate(schema_text, data_text):
+
+def validate(schema_text, data_text, deserializer=_default_deserializer):
     """
     Validate specified JSON text (data_text) with specified schema (schema
-    text). Both are converted to JSON objects with :func:`simplesjon.loads`.
+    text). Both are converted to JSON objects with :func:`simplejson.loads`
+    if present or :func:`json.loads`.
 
     :param schema_text:
         Text of the JSON schema to check against
@@ -39,11 +45,16 @@ def validate(schema_text, data_text):
         Text of the JSON object to check
     :type data_text:
         :class:`str`
+    :param deserializer:
+        Function to convert the schema and data to JSON objects
+    :type deserializer:
+        :class:`callable`
     :returns:
         Same as :meth:`json_schema_validator.validator.Validator.validate`
     :raises:
         Whatever may be raised by simplejson (in particular
         :class:`simplejson.decoder.JSONDecoderError`, a subclass of :class:`ValueError`)
+        or json
     :raises:
         Whatever may be raised by
         :meth:`json_schema_validator.validator.Validator.validate`. In particular
@@ -52,6 +63,6 @@ def validate(schema_text, data_text):
 
 
     """
-    schema = Schema(simplejson.loads(schema_text))
-    data = simplejson.loads(data_text)
+    schema = Schema(deserializer(schema_text))
+    data = deserializer(data_text)
     return Validator.validate(schema, data)

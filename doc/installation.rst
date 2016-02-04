@@ -6,7 +6,6 @@ Prerequisites
 
 This package has the following prerequisites:
 
-* simplejson 
 * versiontools
 
 To run the test suite you will also need:

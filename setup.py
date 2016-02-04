@@ -19,8 +19,17 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with json-schema-validator.  If not, see <http://www.gnu.org/licenses/>.
 
+import sys
+
 from setuptools import setup, find_packages
 
+test_dependencies = [
+    'testscenarios >= 0.1',
+    'testtools >= 0.9.2'
+]
+
+if sys.version_info[0] == 2:
+    test_dependencies.append('PyYaml')
 
 setup(
     name='json-schema-validator',
@@ -40,12 +49,10 @@ setup(
         "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: Implementation :: CPython",
+        "Programming Language :: Python :: Implementation :: PyPy",
     ],
-    install_requires=[
-        'simplejson >= 2.0.9'],
     setup_requires=[
         'versiontools >= 1.3.1'],
-    tests_require=[
-        'testscenarios >= 0.1',
-        'testtools >= 0.9.2'],
+    tests_require=test_dependencies,
     zip_safe=True)
