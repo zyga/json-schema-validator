@@ -1,6 +1,12 @@
 Version History
 ***************
 
+Version 2.4
+===========
+
+* Python 3 support (Thanks to John Vandenberg)
+* Small documentation tweaks.
+
 Version 2.3.1
 =============
 
