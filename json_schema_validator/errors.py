@@ -16,35 +16,27 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with json-schema-validator.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Error classes used by this package
-"""
+"""Error classes used by this package."""
 
 
 class SchemaError(ValueError):
-    """
-    An exception raised when there is a problem with the schema itself.
-    """
+    """Exception raised when there is a problem with the schema itself."""
 
 
 class ValidationError(ValueError):
     """
-    An exception raised when validator finds mismatch between the validated
-    object and the schema.
+    Exception raised on mismatch between the validated object and the schema.
 
-    :ivar message: 
+    :attr message:
         Old and verbose message that contains less helpful message and lots of
         JSON data (deprecated).
-
-    :ivar new_message:
+    :attr new_message:
         short and concise message about the problem
-
-    :ivar object_expr:
+    :attr object_expr:
         A JavaScript expression that evaluates to the object that failed to
         validate. The expression always starts with a root object called
         ``'object'``.
-
-    :ivar schema_expr:
+    :attr schema_expr:
         A JavaScript expression that evaluates to the schema that was checked
         at the time validation failed. The expression always starts with a root
         object called ``'schema'``.
