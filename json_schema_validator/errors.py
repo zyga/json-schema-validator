@@ -27,16 +27,23 @@ class ValidationError(ValueError):
     """
     Exception raised on mismatch between the validated object and the schema.
 
-    :attr message:
+    .. attribute:: message
+
         Old and verbose message that contains less helpful message and lots of
         JSON data (deprecated).
-    :attr new_message:
-        short and concise message about the problem
-    :attr object_expr:
+
+    .. attribute:: new_message
+
+        Short and concise message about the problem.
+
+    .. attribute:: object_expr
+
         A JavaScript expression that evaluates to the object that failed to
         validate. The expression always starts with a root object called
         ``'object'``.
-    :attr schema_expr:
+
+    .. attribute:: schema_expr
+
         A JavaScript expression that evaluates to the schema that was checked
         at the time validation failed. The expression always starts with a root
         object called ``'schema'``.
