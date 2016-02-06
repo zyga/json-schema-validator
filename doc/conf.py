@@ -39,7 +39,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'JSON Schema Validator'
-copyright = u'2010, 2011 Linaro Limited'
+copyright = u'2010, 2011 Linaro Limited; 2016 Zygmunt Krynicki'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
