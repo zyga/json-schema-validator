@@ -26,7 +26,7 @@ setup(
     name='json-schema-validator',
     version=":versiontools:json_schema_validator:__version__",
     author="Zygmunt Krynicki",
-    author_email="zygmunt.krynicki@linaro.org",
+    author_email="me@zygoon.pl",
     description="JSON Schema Validator",
     packages=find_packages(),
     url='https://github.com/zyga/json-schema-validator',
