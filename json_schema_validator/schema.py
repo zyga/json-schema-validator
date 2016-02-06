@@ -16,9 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with json-schema-validator.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Helper module to work with raw JSON Schema
-"""
+"""Helper module to work with raw JSON Schema."""
 
 import re
 import sys
@@ -32,16 +30,19 @@ if sys.version_info[0] > 2:
 
 class Schema(object):
     """
-    JSON schema object
+    JSON schema object.
+
+    Schema describes aspects of a valid object. Upon validation each object has
+    an associated schema. Various properties of the object are tested against
+    rules described by the schema.
     """
 
     def __init__(self, json_obj):
         """
-        Initialize schema with JSON object
+        Initialize a schema with a schema representation.
 
-        .. note::
-            JSON objects are just plain python dictionaries
-
+        :param json_obj:
+            A JSON object (python dictionary) describing the schema.
         """
         if not isinstance(json_obj, dict):
             raise SchemaError("Schema definition must be a JSON object")
@@ -53,20 +54,11 @@ class Schema(object):
     @property
     def type(self):
         """
-        Return the 'type' property of this schema.
+        Type of a valid object.
 
-        The return value is always a list of correct JSON types.
-        Correct JSON types are one of the pre-defined simple types or
-        another schema object.
-
-        List of built-in simple types:
-        * 'string'
-        * 'number'
-        * 'integer'
-        * 'boolean'
-        * 'object'
-        * 'array'
-        * 'any' (default)
+        Type may be a JSON type name or a list of such names. Valid JSON type
+        names are ``string``, ``number``, ``integer``, ``boolean``, ``object``,
+        ``array``, ``any`` (default).
         """
         value = self._schema.get("type", "any")
         if not isinstance(value, (basestring, dict, list)):
@@ -106,13 +98,7 @@ class Schema(object):
 
     @property
     def properties(self):
-        """
-        The properties property contains schema for each property in a
-        dictionary.
-
-        The dictionary name is the property name. The dictionary value
-        is the schema object itself.
-        """
+        """Schema for particular properties of the object."""
         value = self._schema.get("properties", {})
         if not isinstance(value, dict):
             raise SchemaError(
@@ -121,6 +107,13 @@ class Schema(object):
 
     @property
     def items(self):
+        """
+        Schema or a list of schemas describing particular elements of the object.
+
+        A single schema applies to all the elements. Each element of the object
+        must match that schema. A list of schemas describes particular elements
+        of the object.
+        """
         value = self._schema.get("items", {})
         if not isinstance(value, (list, dict)):
             raise SchemaError(
@@ -130,6 +123,7 @@ class Schema(object):
 
     @property
     def optional(self):
+        """Flag indicating an optional property."""
         value = self._schema.get("optional", False)
         if value is not False and value is not True:
             raise SchemaError(
@@ -138,6 +132,7 @@ class Schema(object):
 
     @property
     def additionalProperties(self):
+        """Schema for all additional properties, or False."""
         value = self._schema.get("additionalProperties", {})
         if not isinstance(value, dict) and value is not False:
             raise SchemaError(
@@ -147,6 +142,8 @@ class Schema(object):
 
     @property
     def requires(self):
+        """Additional object or objects required by this object."""
+        # NOTE: spec says this can also be a list of strings
         value = self._schema.get("requires", {})
         if not isinstance(value, (basestring, dict)):
             raise SchemaError(
@@ -156,6 +153,7 @@ class Schema(object):
 
     @property
     def minimum(self):
+        """Minimum value of the object."""
         value = self._schema.get("minimum", None)
         if value is None:
             return
@@ -167,6 +165,7 @@ class Schema(object):
 
     @property
     def maximum(self):
+        """Maximum value of the object."""
         value = self._schema.get("maximum", None)
         if value is None:
             return
@@ -178,6 +177,7 @@ class Schema(object):
 
     @property
     def minimumCanEqual(self):
+        """Flag indicating if maximum value is inclusive or exclusive."""
         if self.minimum is None:
             raise SchemaError("minimumCanEqual requires presence of minimum")
         value = self._schema.get("minimumCanEqual", True)
@@ -189,6 +189,7 @@ class Schema(object):
 
     @property
     def maximumCanEqual(self):
+        """Flag indicating if the minimum value is inclusive or exclusive."""
         if self.maximum is None:
             raise SchemaError("maximumCanEqual requires presence of maximum")
         value = self._schema.get("maximumCanEqual", True)
@@ -200,6 +201,7 @@ class Schema(object):
 
     @property
     def minItems(self):
+        """Minimum number of items in the collection."""
         value = self._schema.get("minItems", 0)
         if not isinstance(value, int):
             raise SchemaError(
@@ -211,6 +213,7 @@ class Schema(object):
 
     @property
     def maxItems(self):
+        """Maximum number of items in the collection."""
         value = self._schema.get("maxItems", None)
         if value is None:
             return
@@ -221,6 +224,7 @@ class Schema(object):
 
     @property
     def uniqueItems(self):
+        """Flag indicating that valid is a collection without duplicates."""
         value = self._schema.get("uniqueItems", False)
         if value is not True and value is not False:
             raise SchemaError(
@@ -230,14 +234,16 @@ class Schema(object):
     @property
     def pattern(self):
         """
+        Regular expression describing valid objects.
+
         .. note::
             JSON schema specifications says that this value SHOULD
             follow the ``EMCA 262/Perl 5`` format. We cannot support
             this so we support python regular expressions instead. This
             is still valid but should be noted for clarity.
 
-
-        :returns None or compiled regular expression
+        :returns:
+            None or compiled regular expression
         """
         value = self._schema.get("pattern", None)
         if value is None:
@@ -251,6 +257,7 @@ class Schema(object):
 
     @property
     def minLength(self):
+        """Minimum length of object."""
         value = self._schema.get("minLength", 0)
         if not isinstance(value, int):
             raise SchemaError(
@@ -262,6 +269,7 @@ class Schema(object):
 
     @property
     def maxLength(self):
+        """Maximum length of object."""
         value = self._schema.get("maxLength", None)
         if value is None:
             return
@@ -273,10 +281,9 @@ class Schema(object):
     @property
     def enum(self):
         """
-        Enumeration of possible correct values.
+        Enumeration of allowed object values.
 
-        *Must* be either ``None`` or a non-empty list of valid objects.
-        The list *must not* contain duplicate elements.
+        The enumeration must not contain duplicates.
         """
         value = self._schema.get("enum", None)
         if value is None:
@@ -300,6 +307,11 @@ class Schema(object):
 
     @property
     def title(self):
+        """
+        Title of the object.
+
+        This schema element is purely informative.
+        """
         value = self._schema.get("title", None)
         if value is None:
             return
@@ -310,6 +322,11 @@ class Schema(object):
 
     @property
     def description(self):
+        """
+        Description of the object.
+
+        This schema element is purely informative.
+        """
         value = self._schema.get("description", None)
         if value is None:
             return
@@ -320,6 +337,7 @@ class Schema(object):
 
     @property
     def format(self):
+        """Format of the (string) object."""
         value = self._schema.get("format", None)
         if value is None:
             return
@@ -353,6 +371,7 @@ class Schema(object):
 
     @property
     def divisibleBy(self):
+        """Integer that divides the object without reminder."""
         value = self._schema.get("divisibleBy", 1)
         if value is None:
             return
@@ -368,6 +387,13 @@ class Schema(object):
 
     @property
     def disallow(self):
+        """
+        Description of disallowed objects.
+
+        Disallow must be a type name, a nested schema or a list of those.  Type
+        name must be one of ``string``, ``number``, ``integer``, ``boolean``,
+        ``object``, ``array``, ``null`` or ``any``.
+        """
         value = self._schema.get("disallow", None)
         if value is None:
             return
@@ -405,6 +431,7 @@ class Schema(object):
 
     @property
     def default(self):
+        """Default value for an object."""
         try:
             return self._schema["default"]
         except KeyError:

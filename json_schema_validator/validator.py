@@ -16,9 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with json-schema-validator.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Validator implementation
-"""
+"""Validator implementation."""
 
 import re
 import datetime
@@ -81,8 +79,7 @@ class Validator(object):
     @classmethod
     def validate(cls, schema, obj):
         """
-        Validate specified JSON object obj with specified Schema
-        instance schema.
+        Validate specified JSON object obj with specified schema.
 
         :param schema:
             Schema to validate against
@@ -166,10 +163,7 @@ class Validator(object):
                               schema_expr)
 
     def _push_property_schema(self, prop):
-        """
-        Construct a sub-schema from the value of the specified attribute
-        of the current schema.
-        """
+        """Construct a sub-schema from a property of the current schema."""
         schema = Schema(self._schema.properties[prop])
         self._push_schema(schema, ".properties." + prop)
 

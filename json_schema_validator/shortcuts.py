@@ -16,9 +16,7 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with json-schema-validator.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-One liners that make the code shorter
-"""
+"""One liners that make the code shorter."""
 
 import simplejson
 
@@ -28,8 +26,9 @@ from json_schema_validator.validator import Validator
 
 def validate(schema_text, data_text):
     """
-    Validate specified JSON text (data_text) with specified schema (schema
-    text). Both are converted to JSON objects with :func:`simplesjon.loads`.
+    Validate specified JSON text with specified schema.
+
+    Both arguments are converted to JSON objects with :func:`simplesjon.loads`.
 
     :param schema_text:
         Text of the JSON schema to check against
@@ -49,8 +48,6 @@ def validate(schema_text, data_text):
         :meth:`json_schema_validator.validator.Validator.validate`. In particular
         :class:`json_schema_validator.errors.ValidationError` and
         :class:`json_schema_validator.errors.SchemaError`
-
-
     """
     schema = Schema(simplejson.loads(schema_text))
     data = simplejson.loads(data_text)
