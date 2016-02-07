@@ -175,7 +175,7 @@ htmlhelp_basename = 'JSONSchemaValidatorDoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'LinaroJSON.tex', u'JSON Schema Validator Documentation',
+  ('index', 'json-schema-validator.tex', u'JSON Schema Validator Documentation',
    u'Zygmunt Krynicki', 'manual'),
 ]
 
