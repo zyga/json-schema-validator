@@ -25,6 +25,13 @@ from __future__ import absolute_import, print_function
 class SchemaError(ValueError):
     """Exception raised when there is a problem with the schema itself."""
 
+    def __init__(self, msg, schema=None):
+        self.msg = msg
+        self.schema = schema
+
+    def __str__(self):
+        return self.msg
+
 
 class ValidationError(ValueError):
     """
