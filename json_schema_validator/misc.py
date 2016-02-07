@@ -20,7 +20,14 @@
 """Stuff that does not belong anywhere else."""
 
 import decimal
-
+import sys
 
 # List of types recognized as numeric
-NUMERIC_TYPES = (int, float, decimal.Decimal)
+if sys.version_info[0] > 2:
+    NUMERIC_TYPES = (int, float, decimal.Decimal)
+    INTEGER_TYPES = (int, decimal.Decimal)
+    STRING_TYPES = (str, )
+else:
+    NUMERIC_TYPES = (int, long, float, decimal.Decimal)
+    INTEGER_TYPES = (int, long, decimal.Decimal)
+    STRING_TYPES = (str, unicode)
