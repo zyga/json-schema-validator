@@ -49,6 +49,7 @@ setup(
     setup_requires=[
         'versiontools >= 1.3.1'],
     tests_require=[
+        'unittest2',
         'testscenarios >= 0.1',
         'testtools >= 0.9.2'],
     zip_safe=True)
