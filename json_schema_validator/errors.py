@@ -19,6 +19,8 @@
 
 """Error classes used by this package."""
 
+from __future__ import absolute_import, print_function
+
 
 class SchemaError(ValueError):
     """Exception raised when there is a problem with the schema itself."""
