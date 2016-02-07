@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU Lesser General Public License
 # along with json-schema-validator.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-JSON Schema Validator
-"""
+"""JSON Schema Validator."""
 
 __version__ = (2, 3, 1, "final", 0)
