@@ -72,3 +72,19 @@ class ValidationError(ValueError):
                 "schema_expr={2!r})").format(
                     self.new_message, self.object_expr,
                     self.schema_expr)
+
+
+class FastValidationFailure(Exception):
+    """
+    Exception raised to stop the fast-path check of the schema.
+
+    This exception is used internally when the validated object is determined
+    not to match the schema. The fast path does not contain any diagnostic
+    messages so the exception carries minimum required state to replay the
+    check with a diagnostic validator that is focused on providing validation
+    messages.
+    """
+
+    def __init__(self, obj, schema):
+        self.obj = obj
+        self.schema = schema
