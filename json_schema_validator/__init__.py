@@ -19,4 +19,4 @@
 
 """JSON Schema Validator."""
 
-__version__ = (2, 4, 0, "final", 0)
+__version__ = (2, 4, 1, "final", 0)

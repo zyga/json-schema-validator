@@ -1,6 +1,12 @@
 Version History
 ***************
 
+Version 2.4.1
+=============
+
+* This release focuses on Python 3.x support by dropping the requirement to use
+  simplejson. Instead on Python 2.x PyYAML is required to deserialize JSON.
+
 Version 2.4
 ===========
 
