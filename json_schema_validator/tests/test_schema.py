@@ -21,9 +21,8 @@
 Unit tests for JSON schema
 """
 
+import json
 import sys
-
-import simplejson
 
 from testscenarios import TestWithScenarios
 from testtools import TestCase
@@ -31,7 +30,14 @@ from testtools import TestCase
 from json_schema_validator.errors import SchemaError
 from json_schema_validator.schema import Schema
 
+PY2 = sys.version_info[0] == 2
 PY35 = sys.version_info[0:2] >= (3, 5)
+
+if PY2:
+    import yaml
+    deserializer = yaml.safe_load
+else:
+    deserializer = json.loads
 
 
 class SchemaTests(TestWithScenarios, TestCase):
@@ -776,7 +782,12 @@ class SchemaTests(TestWithScenarios, TestCase):
     ]
 
     def test_schema_attribute(self):
-        schema = Schema(simplejson.loads(self.schema))
+        if deserializer != json.loads:
+            # Always check the serialised JSON using the native JSON loader
+            # so that any error messages are consistent and appropriate.
+            json.loads(self.schema)
+
+        schema = Schema(deserializer(self.schema))
         if hasattr(self, 'expected'):
             for attr, expected_value in self.expected.items():
                 self.assertEqual(
